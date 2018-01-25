@@ -1,0 +1,29 @@
+{
+  "name": "gogs-cli",
+  "version": "0.0.0",
+  "description": "Commandline interface for your Gogs needs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/reewr/gogs-cli.git"
+  },
+  "keywords": [
+    "gogs",
+    "cli",
+    "commandline",
+    "interface"
+  ],
+  "author": "Alexander Imenes <alexander.imenes@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/reewr/gogs-cli/issues"
+  },
+  "homepage": "https://github.com/reewr/gogs-cli#readme",
+  "dependencies": {
+    "logule": "^2.1.0",
+    "yargs": "^11.0.0"
+  }
+}
