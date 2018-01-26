@@ -3,6 +3,6 @@
 module.exports = {
   command: 'issue <command>',
   desc   : 'Perform actions with issues from gogs',
-  builder: (yargs) => yargs.commandDir('issue-commands'),
+  builder: (yargs) => yargs.commandDir('issue-commands').demandCommand(),
   handler: () => {}
 };

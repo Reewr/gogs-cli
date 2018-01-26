@@ -3,6 +3,6 @@
 module.exports = {
   command: 'repo <command>',
   desc   : 'Perform actions on and with repositories from Gogs',
-  builder: (yargs) => yargs.commandDir('repo-commands'),
+  builder: (yargs) => yargs.commandDir('repo-commands').demandCommand(),
   handler: () => {}
 };
