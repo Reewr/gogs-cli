@@ -2,16 +2,26 @@
 
 This commandline interfaces tries to make it easier to work with Gogs outside of the Browser. The tool is work-in-progress, but has some useful features right now.
 
-The CLI is able to do the following right now:
+## Getting started
 
+In order to get started, it is recommended to install this as global package so you can add `gogs` to your path in Bash. To do this, make sure that your `.npmrc` file has the `prefix` set to somewhere in your homefolder (such as `~/global_npm_packages`).
 
-- Repository
-  - List all repositories available for user
-  - Create repository
-- Issue
-  - List issues of repository
-  - Read issue (with all comments)
-  - Create issue in repository
+Then:
+
+```
+npm install -g gogs-cli
+```
+
+In your bashrc you can then add `~/.global_npm_packages/bin` to your PATH.
+
+The first commands you want to run is to set the configuration file. If you want to save the configuration file to somewhere else than `~/.config/gogs-cli/config.json`, please specify a path using the `GOGS_CONFIG` environment variable.
+
+```
+gogs config set host <INSERT_GOGS_HOSTNAME>
+gogs config set token <INSERT_TOKEN>
+```
+
+After this, you're good to go and can run any of the commands you'd like. The ONLY exception to this is any **destructive** commands, such as **delete**. These are NOT enabled by default. In order to use these, you will also need to use the command `gogs config set enable_destructive true`. Every one of these commands will also have a `--force` parameter which enables you to use these commands without enabling the destructive option.
 
 ## Example
 
