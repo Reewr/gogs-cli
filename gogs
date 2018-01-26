@@ -1,15 +1,6 @@
 #!/usr/bin/node
 'use strict';
-process.env.GOGS_TOKEN = '846c02af361fe75c73f8b83ba919a728d57f3905';
-process.env.GOGS_HOST = 'localhost';
-process.env.GOGS_PORT = '10080';
-process.env.GOGS_DEBUG = true;
 const yargs = require('yargs');
-const log = require('logule').init(module, 'main');
-const config = require('./lib/config');
-
-if (config.GOGS_DEBUG)
-  log.muteOnly();
 
 yargs.commandDir('commands')
   .demandCommand()
