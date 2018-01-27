@@ -1,34 +1,34 @@
 'use strict';
 const request = require('../../lib/request');
+const handler = require('../../lib/handler');
+const errors = require('../../lib/errors');
+const InvalidArgument = errors.InvalidArgument;
+const NotFound = errors.NotFound;
 
 module.exports = {
   command: 'list <repository>',
-  desc   : `
-This command can be used to list the issues of a specific repository.
-
-Usage:
-  gogs issue list aim/gogs
-`,
+  desc   : 'List all issues for a specific repository',
   builder: {},
-  handler: (argv) => {
+  handler: handler.mkHandler(async function(argv) {
     const [username, repository] = argv.repository.split('/');
 
     if (!repository || !username)
-      return console.error('Err: Needs repository and username as USERNAME/REPOSITORY');
+      throw new InvalidArgument('username/repository');
 
     const res = request.get(`/repos/${username}/${repository}/issues`);
 
-    res.on('error', (err) => {
-      console.error('Failed to retrieve issues due to error: ', err);
+    res.on(404, () => {
+      throw new NotFound('Repository', `${username}/${repository}`);
     });
 
-    res.on(400, () => console.error('The access token you used does not have access'));
-    res.on(401, () => console.error('The request that was made was bad'));
-    res.on(404, () => console.error(`Repository "${username}/${repository}" not found.`));
-    res.on(500, () => console.error('An internal server error happened with Gogs'));
-    res.on('success', issues => {
-      console.log(`${issues.length} issue(s) was found:\n` +
-        issues.map(x => `#${x.number} ${x.title} (${x.created_at})`).join('\n'));
-    });
-  }
+    return res.waitForSuccess()
+      .then((issues) => {
+        const title = `${issues.length} issue(s) was found:`;
+        const formattedIssues = issues.map(x => {
+          return `#${x.number} ${x.title} (${x.created_at})`;
+        }).join('\n');
+
+        return `${title}\n${formattedIssues}`;
+      });
+  })
 };
