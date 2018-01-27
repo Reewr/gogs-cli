@@ -69,7 +69,9 @@ module.exports = {
       closed   : argv.closed || false
     };
 
-    const res = request.post(`/repos/${username}/${repository}/issues`, options);
+    const fullname = `${username}/${repository}`;
+    const url = `/repos/${fullname}/issues`;
+    const res = request.post(url, options);
 
     res.on('error', (err) => {
       console.error('Failed to retrieve issues due to error: ', err);
@@ -77,10 +79,10 @@ module.exports = {
 
     res.on(400, () => console.error('The request that was made was bad'));
     res.on(401, () => console.error('The access token you used does not have access'));
-    res.on(404, () => console.error(`Repository "${username}/${repository}" not found.`));
+    res.on(404, () => console.error(`Repository "${fullname}" not found.`));
     res.on(500, () => console.error('An internal server error happened with Gogs'));
     res.on('success', () => {
-      console.log(`The issue "${argv.title}" was created in ${username}/${repository}`);
+      console.log(`The issue "${argv.title}" was created in ${fullname}`);
     });
   }
 };
