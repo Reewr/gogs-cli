@@ -1,50 +1,6 @@
 'use strict';
 const request = require('../../lib/request');
-const editor  = process.env.EDITOR || 'vi';
-const spawn = require('child_process').spawn;
-const os = require('os');
-const path = require('path');
-const fs = require('fs');
-
-const getMessageFromFavouriteEditor = function(title) {
-  const tmpFile = path.join(os.tmpdir(), Date.now() + 'gogs-issue-message.md');
-
-  fs.writeFileSync(tmpFile, [
-    '',
-    '',
-    '//// Lines beginning with \'////\' is ignored',
-    '//// ',
-    `//// Current title: ${title}`,
-    '////'
-  ].join('\n'));
-
-  const child = spawn(editor, [tmpFile], {
-    stdio: 'inherit'
-  });
-
-  return new Promise((resolve, reject) => {
-    child.on('exit', function(exitCode, signal) {
-      console.log(exitCode, signal);
-      if (exitCode !== 0)
-        return reject();
-
-      const content = fs
-        .readFileSync(tmpFile)
-        .toString()
-        .split('\n')
-        .filter(x => !x.startsWith('////'))
-        .join('\n')
-        .trim();
-
-      if (content.length === 0)
-        return reject('aborted');
-
-      fs.unlinkSync(tmpFile);
-      resolve(content);
-    });
-    child.on('error', reject);
-  });
-};
+const editor  = require('../../lib/editor');
 
 module.exports = {
   command: 'create <repository> [title]',
@@ -89,9 +45,16 @@ module.exports = {
 
     if (!argv.message)
       try {
-        message = await getMessageFromFavouriteEditor(argv.title);
+        message = await editor('md', [
+          '',
+          '',
+          '//// Lines beginning with \'////\' is ignored',
+          '//// ',
+          `//// Current title: ${argv.title}`,
+          '////'
+        ].join('\n'), '////');
       } catch (err) {
-        if (err === 'aborted')
+        if (err instanceof editor.EditorAborted)
           console.error('Aborting issue');
         else
           console.error('An error occurred while handling message', err);
