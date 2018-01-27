@@ -3,8 +3,8 @@ const request = require('../../lib/request');
 const editor  = require('../../lib/editor');
 
 module.exports = {
-  command: 'create <repository> [title]',
-  desc   : 'This command can be used to create an issue in a repo',
+  command: 'add <repository> [title]',
+  desc   : 'This command can be used to add an issue in a repo',
   builder: function(yargs) {
     return yargs
       .positional('title', {
@@ -18,7 +18,7 @@ module.exports = {
       })
       .option('c', {
         alias   : 'closed',
-        describe: 'If present, the issue will be created as closed',
+        describe: 'If present, the issue will be added as closed',
         boolean : true
       })
       .option('a', {
@@ -82,7 +82,7 @@ module.exports = {
     res.on(404, () => console.error(`Repository "${fullname}" not found.`));
     res.on(500, () => console.error('An internal server error happened with Gogs'));
     res.on('success', () => {
-      console.log(`The issue "${argv.title}" was created in ${fullname}`);
+      console.log(`The issue "${argv.title}" was added in ${fullname}`);
     });
   }
 };
