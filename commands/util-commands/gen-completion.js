@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
-  command: 'show-completion',
-  desc   : 'Shows the completion as a bash script',
+  command: 'gen-completion',
+  desc   : 'Generates the completion as a bash script',
   builder: function(yargs) {
     return yargs.showCompletionScript();
   },
