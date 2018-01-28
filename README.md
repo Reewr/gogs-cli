@@ -1,6 +1,6 @@
 # Gogs-cli
 
-This commandline interfaces tries to make it easier to work with Gogs outside of the Browser. The tool is work-in-progress, but has some useful features right now.
+This command line interfaces tries to make it easier to work with Gogs outside of the Browser. The tool is work-in-progress, but has some useful features right now.
 
 ## Getting started
 
@@ -14,14 +14,25 @@ npm install -g gogs-cli
 
 In your bashrc you can then add `~/.global_npm_packages/bin` to your PATH.
 
-The first commands you want to run is to set the configuration file. If you want to save the configuration file to somewhere else than `~/.config/gogs-cli/config.json`, please specify a path using the `GOGS_CONFIG` environment variable.
+The first commands you want to run is to set the configuration file. If you want to save the configuration file to somewhere else than `~/.config/gogs-cli/config.json`, please specify a path using the `GOGS_CLI_CONFIG_PATH` environment variable.
 
 ```
 gogs config set host <INSERT_GOGS_HOSTNAME>
 gogs config set token <INSERT_TOKEN>
 ```
 
-After this, you're good to go and can run any of the commands you'd like. The ONLY exception to this is any **destructive** commands, such as **delete**. These are NOT enabled by default. In order to use these, you will also need to use the command `gogs config set enable_destructive true`. Every one of these commands will also have a `--force` parameter which enables you to use these commands without enabling the destructive option.
+After this, you're good to go and can run any of the commands you'd like.
+
+## Getting autocompletion
+
+The auto-completion is still in development and will in the future also allow you to cache repositories and issues, but for now, you will need to do the following:
+
+```bash
+gogs util gen-completion > some-file.sh
+source some-file.sh
+```
+
+The above will give you auto-completion on all commands that has completions as well as new ones that will come. You should add the sourcing of the file to your .bashrc file if you want this behaviour in every terminal you open.
 
 ## Testing
 
