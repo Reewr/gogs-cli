@@ -55,7 +55,7 @@ const getLastXComments = async function(username, repository, id, numComments = 
 
 module.exports = {
   command: 'reply <repository> <issuenumber>',
-  desc   : 'This command can be used to reply to an issue in a repo',
+  desc   : 'Reply to an issue in a repository',
   builder: function(yargs) {
     return yargs
       .option('m', {

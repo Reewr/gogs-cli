@@ -7,7 +7,7 @@ const InvalidArgument = errors.InvalidArgument;
 
 module.exports = {
   command: 'add <repository> [title]',
-  desc   : 'This command can be used to add an issue in a repo',
+  desc   : 'Add an issue to a repository',
   builder: function(yargs) {
     return yargs
       .positional('title', {

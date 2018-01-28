@@ -5,7 +5,7 @@ const NotFound = errors.NotFound;
 
 module.exports = {
   command: 'issue <command>',
-  desc   : 'Perform actions with issues from gogs',
+  desc   : 'Perform operations with issues on Gogs',
   builder: (yargs) => yargs.commandDir('issue-commands').demandCommand(),
   handler: () => {},
 
@@ -16,7 +16,8 @@ module.exports = {
 
       res.on('error', reject);
       res.on(404, () => {
-        reject(new NotFound(`Issue #${id} in "${username}/${repository}" not found.`));
+        reject(new NotFound(
+          `Issue #${id} in "${username}/${repository}" not found.`));
       });
       res.on('success', resolve);
     });
