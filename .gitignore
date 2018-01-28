@@ -1,2 +1,5 @@
 node_modules
 .tern-port
+test-env.sh
+test/config.json
+start-test-docker.sh
