@@ -100,19 +100,23 @@ describe('gogs config set', function() {
   });
 
   it('should have saved to config file', async function() {
-    try {
-      const file = await fsRead(process.env.GOGS_CLI_TEST_CONFIG_PATH);
-      const json = JSON.parse(file.toString());
+    let file;
+    let json;
 
-      expect(json).to.deep.equal({
-        host : 'testing',
-        port : '1080',
-        token: 'mytoken',
-        debug: false
-      });
+    try {
+      file = await fsRead(process.env.GOGS_CLI_TEST_CONFIG_PATH);
+      json = JSON.parse(file.toString());
     } catch (err) {
-      expect(err).to.equal(null);
+      console.error(err);
+      chai.assert(false, 'should not have been called');
     }
+
+    expect(json).to.deep.equal({
+      host : 'testing',
+      port : 1080,
+      token: 'mytoken',
+      debug: false
+    });
   });
 
   after(() => {
