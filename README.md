@@ -23,6 +23,14 @@ gogs config set token <INSERT_TOKEN>
 
 After this, you're good to go and can run any of the commands you'd like.
 
+The current capabilities include:
+
+- Adding and listing repositories
+- Adding, listing, reading and replying to issues
+- Finding user
+
+I plan to support all of the Gogs API through a sensible commandline, even administrative options
+
 ## Getting autocompletion
 
 The auto-completion is still in development and will in the future also allow you to cache repositories and issues, but for now, you will need to do the following:
