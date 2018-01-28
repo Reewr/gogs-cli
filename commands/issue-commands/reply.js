@@ -8,6 +8,13 @@ const getComments     = require('../issue').getComments;
 const wrapAnsi        = require('wrap-ansi');
 const InvalidArgument = errors.InvalidArgument;
 
+/**
+ * Formats the author, returning full name(username) if the fullname and
+ * the username both exists, otherwise returns the username
+ *
+ * @param {Object} user
+ * @returns {String}
+ */
 const formatAuthor = function(user) {
   let author = user.username;
 
@@ -17,7 +24,21 @@ const formatAuthor = function(user) {
   return author;
 };
 
-const getLastXComments = async function(username, repository, id, numComments = 1) {
+/**
+ * Returns the last X comments on the issue in the given repository. If
+ * the number of comments is 0, returns an empty string
+ *
+ * @param {String} username
+ * @param {String} repository
+ * @param {String} id
+ * @param {Number} numComments=1
+ * @returns {String}
+ */
+const getLastXComments = async function(
+  username,
+  repository,
+  id,
+  numComments = 1) {
   if (numComments === 0)
     return '';
 
@@ -125,6 +146,8 @@ module.exports = {
     const res = request.post(url, options);
 
     return res.waitForSuccess()
-      .then(() => `The comment to issue "#${argv.issuenumber}" was added in ${fullname}`);
+      .then(() => {
+        return `Comment added to issue "#${argv.issuenumber}" in ${fullname}`;
+      });
   })
 };
