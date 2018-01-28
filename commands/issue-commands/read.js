@@ -1,8 +1,11 @@
 'use strict';
-const chalk    = require('chalk');
-const wrapAnsi = require('wrap-ansi');
-const getIssue = require('../issue').get;
-const getComments = require('../issue').getComments;
+const chalk           = require('chalk');
+const wrapAnsi        = require('wrap-ansi');
+const errors          = require('../../lib/errors');
+const mkHandler       = require('../../lib/handler').mkHandler;
+const getIssue        = require('../issue').get;
+const getComments     = require('../issue').getComments;
+const InvalidArgument = errors.InvalidArgument;
 
 const formatAuthor = function(user) {
   let author = user.username;
@@ -36,18 +39,18 @@ module.exports = {
       type    : 'number'
     });
   },
-  handler: async function(argv) {
+  handler: mkHandler(async function(argv) {
     const [username, repo] = argv.repository.split('/');
     const number = argv.number;
 
     if (!repo || !username)
-      return console.error('Err: Needs repository and username as USERNAME/REPOSITORY');
+      throw new InvalidArgument('repository and username as USERNAME/REPOSITORY');
 
     if (typeof number !== 'number' || isNaN(number))
-      return console.error('Err: Needs an issue number');
+      throw new InvalidArgument('issue number');
 
-    const issue = await getIssue(username, repo, number);
-    const comments = await getComments(username, repo, number);
+    const issue      = await getIssue(username, repo, number);
+    const comments   = await getComments(username, repo, number);
     const stateColor = issue.state === 'closed' ? 'red' : 'green';
     const body = issue.body === '' ? 'There is no content yet' : issue.body;
     const content = [
@@ -63,6 +66,7 @@ module.exports = {
       comments
         .map(x => formatComment(x, argv['max-columns']))
         .join('\n---\n'));
-    console.log(content.join('\n'));
-  }
+
+    return content.join('\n');
+  })
 };
