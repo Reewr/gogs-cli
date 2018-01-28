@@ -1,9 +1,7 @@
 'use strict';
 const request = require('../../lib/request');
 const handler = require('../../lib/handler');
-const errors = require('../../lib/errors');
-const InvalidArgument = errors.InvalidArgument;
-const NotFound = errors.NotFound;
+const {InvalidArgument} = require('../../lib/errors');
 
 module.exports = {
   command: 'list <repository>',
@@ -16,10 +14,6 @@ module.exports = {
       throw new InvalidArgument('username/repository');
 
     const res = request.get(`/repos/${username}/${repository}/issues`);
-
-    res.on(404, () => {
-      throw new NotFound('Repository', `${username}/${repository}`);
-    });
 
     return res.waitForSuccess()
       .then((issues) => {
