@@ -9,7 +9,9 @@ module.exports = {
     return yargs.positional('option', {
       describe: 'the option to set the value for',
       type    : 'string',
-      choices : config.allowedOptions
+      choices : config.allowedOptions,
+    }).completion('option', function(current) {
+      return config.allowedOptions.filter(x => x.indexOf(current !== -1));
     });
   },
   handler: mkHandler((argv) => {
