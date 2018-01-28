@@ -3,3 +3,4 @@ node_modules
 test-env.sh
 test/config.json
 start-test-docker.sh
+coverage
