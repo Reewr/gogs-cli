@@ -49,12 +49,8 @@ module.exports = {
     if (!argv.message) {
       message = await editor('md', [
         '',
-        '',
-        '//// Lines beginning with \'////\' is ignored',
-        '//// ',
-        `//// Current title: ${argv.title}`,
-        '////'
-      ].join('\n'), '////');
+        `Current title: ${argv.title}`,
+      ].join('\n'));
     }
 
     const options = {

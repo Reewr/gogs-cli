@@ -28,10 +28,10 @@ const getLastXComments = async function(username, repository, id, numComments = 
   const body = issue.body === '' ? 'There is no content yet' : issue.body;
 
   const content = [
-    `#${issue.number}} ${issue.title}`,
-    `State : ${issue.state}`,
-    `Author: ${formatAuthor(issue.user)}`,
-    `Date  : ${issue.created_at}`,
+    `#${issue.number} ${issue.title}`,
+    `**State** : ${issue.state}`,
+    `**Author**: ${formatAuthor(issue.user)}`,
+    `**Date**  : ${issue.created_at}`,
     `${wrapAnsi(body, 80)}`,
   ];
 
@@ -43,8 +43,8 @@ const getLastXComments = async function(username, repository, id, numComments = 
   if (include.length) {
     include.forEach(x => {
       content.push('---');
-      content.push(`Author: ${formatAuthor(x.user)}`);
-      content.push(`Date  : ${x.created_at}`);
+      content.push(`**Author**: ${formatAuthor(x.user)}`);
+      content.push(`**Date**  : ${x.created_at}`);
       content.push('');
       content.push(wrapAnsi(x.body, 80));
     });
@@ -113,7 +113,7 @@ module.exports = {
                                              argv.i,
                                              argv.o);
 
-      message = await editor('md', comment, '////');
+      message = await editor('md', comment);
     }
 
     const options = {
