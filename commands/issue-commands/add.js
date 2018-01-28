@@ -1,6 +1,9 @@
 'use strict';
 const request = require('../../lib/request');
 const editor  = require('../../lib/editor');
+const errors  = require('../../lib/errors');
+const mkHandler  = require('../../lib/handler').mkHandler;
+const InvalidArgument = errors.InvalidArgument;
 
 module.exports = {
   command: 'add <repository> [title]',
@@ -32,34 +35,27 @@ module.exports = {
         type    : 'number'
       });
   },
-  handler: async function(argv) {
+  handler: mkHandler(async function(argv) {
     const [username, repository] = argv.repository.split('/');
 
     if (!repository || !username)
-      return console.error('Err: Needs repository and username as USERNAME/REPOSITORY');
+      throw new InvalidArgument('username and repository as USERNAME/REPOSITORY');
 
     if (!argv.title)
-      return console.error('Err: Title must be set');
+      throw new InvalidArgument('title');
 
     let message = argv.message;
 
-    if (!argv.message)
-      try {
-        message = await editor('md', [
-          '',
-          '',
-          '//// Lines beginning with \'////\' is ignored',
-          '//// ',
-          `//// Current title: ${argv.title}`,
-          '////'
-        ].join('\n'), '////');
-      } catch (err) {
-        if (err instanceof editor.EditorAborted)
-          console.error('Aborting issue');
-        else
-          console.error('An error occurred while handling message', err);
-        return process.exit(1);
-      }
+    if (!argv.message) {
+      message = await editor('md', [
+        '',
+        '',
+        '//// Lines beginning with \'////\' is ignored',
+        '//// ',
+        `//// Current title: ${argv.title}`,
+        '////'
+      ].join('\n'), '////');
+    }
 
     const options = {
       title    : argv.title,
@@ -70,19 +66,12 @@ module.exports = {
     };
 
     const fullname = `${username}/${repository}`;
-    const url = `/repos/${fullname}/issues`;
-    const res = request.post(url, options);
+    const url      = `/repos/${fullname}/issues`;
+    const res      = request.post(url, options);
 
-    res.on('error', (err) => {
-      console.error('Failed to retrieve issues due to error: ', err);
-    });
-
-    res.on(400, () => console.error('The request that was made was bad'));
-    res.on(401, () => console.error('The access token you used does not have access'));
-    res.on(404, () => console.error(`Repository "${fullname}" not found.`));
-    res.on(500, () => console.error('An internal server error happened with Gogs'));
-    res.on('success', () => {
-      console.log(`The issue "${argv.title}" was added in ${fullname}`);
-    });
-  }
+    return res.waitForSuccess()
+      .then(() => {
+        return `The issue "${argv.title}" was added in ${fullname}`;
+      });
+  })
 };
