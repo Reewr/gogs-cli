@@ -1,7 +1,7 @@
 'use strict';
 const request = require('../../lib/request');
 const handler = require('../../lib/handler');
-const {InvalidArgument} = require('../../lib/errors');
+const {InvalidArgument, NotFound} = require('../../lib/errors');
 
 module.exports = {
   command: 'list <repository>',
@@ -17,12 +17,19 @@ module.exports = {
 
     return res.waitForSuccess()
       .then((issues) => {
-        const title = `${issues.length} issue(s) was found:`;
+        const title = `${issues.length} issue(s) was found`;
         const formattedIssues = issues.map(x => {
           return `#${x.number} ${x.title} (${x.created_at})`;
         }).join('\n');
 
-        return `${title}\n${formattedIssues}`;
+        if (issues.length === 0)
+          return `No issues where found on "${username}/${repository}`;
+
+        return `${title}:\n${formattedIssues}`;
+      }).catch(e => {
+        if (e instanceof NotFound)
+          throw new NotFound('Repository', `${username}/${repository}`);
+        throw e;
       });
   })
 };
