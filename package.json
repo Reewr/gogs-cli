@@ -4,7 +4,10 @@
   "description": "Commandline interface for your Gogs needs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/**"
+  },
+  "bin": {
+    "gogs": "bin/cli.js"
   },
   "repository": {
     "type": "git",
@@ -27,5 +30,9 @@
     "logule": "^2.1.0",
     "wrap-ansi": "^3.0.1",
     "yargs": "^11.0.0"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.0.0"
   }
 }
