@@ -1,5 +1,6 @@
 'use strict';
 const config = require('../../lib/config');
+const {mkHandler} = require('../../lib/handler');
 
 module.exports = {
   command: 'get <option>',
@@ -11,7 +12,7 @@ module.exports = {
       choices : config.allowedOptions
     });
   },
-  handler: (argv) => {
-    console.log(`"${argv.option}" = ${config[argv.option]}`);
-  }
+  handler: mkHandler((argv) => {
+    return `"${argv.option}" = ${config[argv.option]}`;
+  })
 };
