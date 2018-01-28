@@ -1,9 +1,12 @@
 'use strict';
-const request = require('../../lib/request');
-const editor  = require('../../lib/editor');
-const getIssue = require('../issue').get;
-const getComments = require('../issue').getComments;
-const wrapAnsi = require('wrap-ansi');
+const request         = require('../../lib/request');
+const editor          = require('../../lib/editor');
+const errors          = require('../../lib/errors');
+const mkHandler       = require('../../lib/handler').mkHandler;
+const getIssue        = require('../issue').get;
+const getComments     = require('../issue').getComments;
+const wrapAnsi        = require('wrap-ansi');
+const InvalidArgument = errors.InvalidArgument;
 
 const formatAuthor = function(user) {
   let author = user.username;
@@ -89,14 +92,14 @@ module.exports = {
         default: false
       });
   },
-  handler: async function(argv) {
+  handler: mkHandler(async function(argv) {
     const [username, repository] = argv.repository.split('/');
 
     if (!repository || !username)
-      return console.error('Err: Needs repository and username as USERNAME/REPOSITORY');
+      throw new InvalidArgument('repository and username as USERNAME/REPOSITORY');
 
     if (typeof argv.issuenumber !== 'number' || isNaN(argv.issuenumber))
-      return console.error('Err: Needs an issue number');
+      throw new InvalidArgument('issue number');
 
     let message = argv.message;
 
@@ -109,15 +112,8 @@ module.exports = {
                                              argv.issuenumber,
                                              argv.i,
                                              argv.o);
-      try {
-        message = await editor('md', comment, '////');
-      } catch (err) {
-        if (err instanceof editor.EditorAborted)
-          console.error('Aborting issue');
-        else
-          console.error('An error occurred while handling message', err);
-        return process.exit(1);
-      }
+
+      message = await editor('md', comment, '////');
     }
 
     const options = {
@@ -127,19 +123,8 @@ module.exports = {
     const fullname = `${username}/${repository}`;
     const url = `/repos/${fullname}/issues/${argv.issuenumber}/comments`;
     const res = request.post(url, options);
-    const onSuccess = () => {
-      console.log(`The comment to issue "#${argv.issuenumber}" was added in ${fullname}`);
-    };
 
-    res.on('error', (err) => {
-      console.error('Failed to retrieve issues due to error: ', err);
-    });
-
-    res.on('success', onSuccess);
-    res.on(201, onSuccess);
-    res.on(400, () => console.error('The request that was made was bad'));
-    res.on(401, () => console.error('The access token you used does not have access'));
-    res.on(404, () => console.error(`Repository "${fullname}" or issue was not found.`));
-    res.on(500, () => console.error('An internal server error happened with Gogs'));
-  }
+    return res.waitForSuccess()
+      .then(() => `The comment to issue "#${argv.issuenumber}" was added in ${fullname}`);
+  })
 };
