@@ -4,6 +4,8 @@ const yargs = require('yargs');
 
 module.exports = async function(args) {
   const result = yargs(args)
+    .usage('$0 <command>')
+    .recommendCommands(true)
     .commandDir('commands')
     .demandCommand()
     .help()
