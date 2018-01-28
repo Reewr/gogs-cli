@@ -23,23 +23,28 @@ gogs config set token <INSERT_TOKEN>
 
 After this, you're good to go and can run any of the commands you'd like. The ONLY exception to this is any **destructive** commands, such as **delete**. These are NOT enabled by default. In order to use these, you will also need to use the command `gogs config set enable_destructive true`. Every one of these commands will also have a `--force` parameter which enables you to use these commands without enabling the destructive option.
 
-## Example
+## Testing
 
-```bash
-# You either need to set GOGS_TOKEN and GOGS_HOST as environmental variables
-# or you can create a config (defaults to ~/.config/gogs-cli/config.json) with these
-# specified. See example config in repository. The path of the config file can
-# be changed using the `GOGS_CONFIG` token
-> gogs list issue reewr/gogs-cli
-10 issue(s) was found:
-#12 test (2018-01-25T20:40:03Z)
-#11 test (2018-01-25T20:37:59Z)
-#10 test (2018-01-25T20:34:35Z)
-#9 test (2018-01-25T20:34:27Z)
-#8 test (2018-01-25T20:33:01Z)
-#7 test (2018-01-25T20:27:03Z)
-#6 test (2018-01-25T20:17:01Z)
-#5 test (2018-01-25T20:15:12Z)
-#4 test (2018-01-25T20:14:52Z)
-#3 test (2018-01-25T20:14:31Z)
-```
+In order to test, you will need a local Gogs instance that the cli can contact and change. It primarily adds lots of repositories and issues.
+
+When this is done, the following environment variables must be defined:
+
+**GOGS_CLI_TEST_HOST**
+
+The hostname of the Gogs testing instance
+
+**GOGS_CLI_TEST_USERNAME**
+
+The user to perform tests with. This has to be an active user within the Gogs instance.
+
+**GOGS_CLI_TEST_TOKEN**
+
+The token to test with. This should be a token created by the user specified as "TEST_USERNAME".
+
+**GOGS_CLI_TEST_ORGANIZATION**
+
+The organization to test with. This has to be an organization where "GOGS_CLI_TEST_USERNAME" is an owner so it can add repositories.
+
+**GOGS_CLI_TEST_PORT**
+
+If the Gogs instance does not run on normal ports for the HTTP/HTTPS hostname specified, you will need to specify that.
