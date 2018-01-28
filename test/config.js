@@ -1,4 +1,4 @@
-/* globals describe it before */
+/* globals describe it before after */
 'use strict';
 const chai   = require('chai');
 const chalk  = require('chalk');
@@ -113,5 +113,9 @@ describe('gogs config set', function() {
     } catch (err) {
       expect(err).to.equal(null);
     }
+  });
+
+  after(() => {
+    checkEnvironment();
   });
 });
