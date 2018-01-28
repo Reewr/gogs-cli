@@ -31,6 +31,23 @@ The current capabilities include:
 
 I plan to support all of the Gogs API through a sensible commandline, even administrative options
 
+```bash
+gogs <command>
+
+Commands:
+  gogs config <command>  Allow setting and getting Gogs CLI configuration
+                         options
+  gogs issue <command>   Perform operations with issues on Gogs
+  gogs repo <command>    Perform actions on and with repositories from Gogs
+  gogs user <command>    Perform actions with user in gogs
+  gogs util <command>    Utility command to improve the experience of the Gogs
+                         CLI
+
+Options:
+  --version  Show version number                                       [boolean]
+  --help     Show help                                                 [boolean]
+```
+
 ## Getting autocompletion
 
 The auto-completion is still in development and will in the future also allow you to cache repositories and issues, but for now, you will need to do the following:
