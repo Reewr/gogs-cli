@@ -10,7 +10,18 @@ module.exports = {
   builder: {},
   handler: mkHandler(async function() {
     const repos = await request.get('/user/repos');
+    let longestName = 0;
+    const formatted = repos
+      .map(x => {
+        longestName = Math.max(x.full_name.length, longestName);
+        return x.full_name;
+      })
+      .map(x => {
+        return x + ' '.repeat(longestName - x.length);
+      });
 
-    return wrap(repos.map(x => x.full_name).join('    '), 80);
+    formatted.sort();
+
+    return wrap(formatted.join(' '), 80, {trim: false});
   })
 };
