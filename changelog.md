@@ -2,6 +2,12 @@
 
 This file will contain the most important changes in the different versions of the package.
 
+# 0.2.1
+
+**Date**: 31.01.2018<br>
+**Changes**:
+
+Adds two options to `gogs issue list`. `-p` and `-n` (`--pull-requests` and `--no-pull-requests` respectively). These can be used to only list or not list pull requests together with the issues.
 
 # 0.2
 
