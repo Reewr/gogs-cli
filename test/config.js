@@ -91,9 +91,10 @@ describe('gogs config set', function() {
     }
 
     expect(json).to.deep.equal({
-      hostname: 'testing',
-      token   : 'mytoken',
-      debug   : false
+      hostname                 : 'testing',
+      token                    : 'mytoken',
+      'ignore_invalid_ssl_cert': false,
+      debug                    : false
     });
   });
 
