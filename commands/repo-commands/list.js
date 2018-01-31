@@ -7,9 +7,17 @@ module.exports = {
   command: 'list',
   desc   : 'List all available repositories',
   example: 'gogs repo list',
-  builder: {},
-  handler: mkHandler(async function() {
+  builder: function(yargs) {
+    return yargs.option('l', {
+      alias   : 'list',
+      describe: 'Prints out the repositories as a list ' +
+                'instead of columns',
+      boolean: true
+    });
+  },
+  handler: mkHandler(async function(argv) {
     const repos = await request.get('/user/repos');
+
     let longestName = 0;
     const formatted = repos
       .map(x => {
@@ -21,6 +29,9 @@ module.exports = {
       });
 
     formatted.sort();
+
+    if (argv.l)
+      return `${formatted.map(x => x.trim()).join('\n')}`;
 
     return wrap(formatted.join(' '), 80, {trim: false});
   })
