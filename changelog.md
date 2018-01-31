@@ -9,7 +9,8 @@ This file will contain the most important changes in the different versions of t
 
 Adds two options to `gogs issue list`. `-p` and `-n` (`--pull-requests` and `--no-pull-requests` respectively). These can be used to only list or not list pull requests together with the issues.
 
-Some fixes to issues that could cause the config to be overwritten with default values
+Some fixes to issues that could cause the config to be overwritten with default values.
+Adds better formatting when listing repositories. Adds `-l` (`--list`) command to `repo list` to allowing printing the repositories as a list of instead of in columns.
 
 # 0.2
 
