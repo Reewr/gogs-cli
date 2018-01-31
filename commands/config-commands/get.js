@@ -8,15 +8,17 @@ module.exports = {
   builder: function(yargs) {
     return yargs
       .completion('option', function(current) {
-        return config.allowedOptions.filter(x => x.indexOf(current !== -1));
+        return config
+          .getAvailableOptions()
+          .filter(x => x.indexOf(current !== -1));
       })
       .positional('option', {
         describe: 'the option to retrieve the value for',
         type    : 'string',
-        choices : config.allowedOptions
+        choices : config.getAvailableOptions()
       });
   },
   handler: mkHandler((argv) => {
-    return `"${argv.option}" = ${config[argv.option]}`;
+    return `"${argv.option}" = ${config.getOption(argv.option)}`;
   })
 };

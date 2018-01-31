@@ -13,8 +13,7 @@ chalk.enabled = false;
 
 describe('gogs config get', function() {
   before(async function() {
-    await run('config set host myhost');
-    await run('config set port 8000');
+    await run('config set hostname myhost');
     await run('config set token something');
   });
 
@@ -26,18 +25,11 @@ describe('gogs config get', function() {
     expect(result.err.message).to.equal('Not enough non-option arguments: got 0, need at least 1');
   });
 
-  it('should retrieve host',  async function() {
-    const result = await run('config get host');
+  it('should retrieve hostname',  async function() {
+    const result = await run('config get hostname');
 
     expect(result.err).to.equal(null);
-    expect(result.value).to.equal('"host" = myhost');
-  });
-
-  it('should retrieve port',  async function() {
-    const result = await run('config get port');
-
-    expect(result.err).to.equal(null);
-    expect(result.value).to.equal('"port" = 8000');
+    expect(result.value).to.equal('"hostname" = myhost');
   });
 
   it('should retrieve token',  async function() {
@@ -50,41 +42,28 @@ describe('gogs config get', function() {
 
 describe('gogs config set', function() {
   before(async function() {
-    await run('config set host myhost');
-    await run('config set port 8000');
+    await run('config set hostname myhost');
     await run('config set token something');
   });
 
   it('throws on missing argument', async function() {
-    const result = await run('config set host');
+    const result = await run('config set hostname');
 
     expect(result.err).to.not.equal(null);
     expect(result.value).to.equal(null);
     expect(result.err.message).to.equal('Not enough non-option arguments: got 1, need at least 2');
   });
 
-  it('should set host',  async function() {
-    const result = await run('config set host testing');
+  it('should set hostname',  async function() {
+    const result = await run('config set hostname testing');
 
     expect(result.err).to.equal(null);
-    expect(result.value).to.equal('Successfully set host');
+    expect(result.value).to.equal('Successfully set hostname');
 
-    const afterSet = await run('config get host');
-
-    expect(afterSet.err).to.equal(null);
-    expect(afterSet.value).to.equal('"host" = testing');
-  });
-
-  it('should set port',  async function() {
-    const result = await run('config set port 1080');
-
-    expect(result.err).to.equal(null);
-    expect(result.value).to.equal('Successfully set port');
-
-    const afterSet = await run('config get port');
+    const afterSet = await run('config get hostname');
 
     expect(afterSet.err).to.equal(null);
-    expect(afterSet.value).to.equal('"port" = 1080');
+    expect(afterSet.value).to.equal('"hostname" = testing');
   });
 
   it('should set token',  async function() {
@@ -112,10 +91,9 @@ describe('gogs config set', function() {
     }
 
     expect(json).to.deep.equal({
-      host : 'testing',
-      port : 1080,
-      token: 'mytoken',
-      debug: false
+      hostname: 'testing',
+      token   : 'mytoken',
+      debug   : false
     });
   });
 

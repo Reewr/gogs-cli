@@ -8,7 +8,7 @@ module.exports = {
     return yargs.positional('option', {
       describe: 'the option to retrieve the value for',
       type    : 'string',
-      choices : config.allowedOptions
+      choices : config.getAvailableOptions()
     });
   },
   handler: (argv) => {

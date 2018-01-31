@@ -54,8 +54,8 @@ module.exports.run = async function(args) {
 module.exports.checkEnvironment = function() {
   const failed = [];
 
-  if (!process.env.GOGS_CLI_TEST_HOST)
-    failed.push('GOGS_CLI_TEST_HOST');
+  if (!process.env.GOGS_CLI_TEST_HOSTNAME)
+    failed.push('GOGS_CLI_TEST_HOSTNAME');
 
   if (!process.env.GOGS_CLI_TEST_TOKEN)
     failed.push('GOGS_CLI_TEST_TOKEN');
@@ -73,7 +73,6 @@ module.exports.checkEnvironment = function() {
     throw Error('These env variables must be defined for tests:\n\t' + failed.join('\n\t'));
 
   process.env.GOGS_CLI_CONFIG_PATH = process.env.GOGS_CLI_TEST_CONFIG_PATH;
-  config.token = process.env.GOGS_CLI_TEST_TOKEN;
-  config.host = process.env.GOGS_CLI_TEST_HOST;
-  config.port = process.env.GOGS_CLI_TEST_PORT || undefined;
+  config.setOption('token', process.env.GOGS_CLI_TEST_TOKEN);
+  config.setOption('hostname', process.env.GOGS_CLI_TEST_HOSTNAME);
 };
