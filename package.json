@@ -29,6 +29,7 @@
   "dependencies": {
     "chalk": "^2.3.0",
     "logule": "^2.1.0",
+    "request": "^2.83.0",
     "wrap-ansi": "^3.0.1",
     "yargs": "^11.0.0"
   },

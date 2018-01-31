@@ -9,11 +9,8 @@ module.exports = {
   example: 'gogs repo list',
   builder: {},
   handler: mkHandler(async function() {
-    const res = request.get('/user/repos');
+    const repos = await request.get('/user/repos');
 
-    return res.waitForSuccess()
-      .then((repos) => {
-        return wrap(repos.map(x => x.full_name).join('    '), 80);
-      });
+    return wrap(repos.map(x => x.full_name).join('    '), 80);
   })
 };

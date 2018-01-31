@@ -15,21 +15,20 @@ module.exports = {
 
     const res = request.get(`/repos/${username}/${repository}/issues`);
 
-    return res.waitForSuccess()
-      .then((issues) => {
-        const title = `${issues.length} issue(s) was found`;
-        const formattedIssues = issues.map(x => {
-          return `#${x.number} ${x.title} (${x.created_at})`;
-        }).join('\n');
+    return res.then(issues => {
+      const title = `${issues.length} issue(s) was found`;
+      const formattedIssues = issues.map(x => {
+        return `#${x.number} ${x.title} (${x.created_at})`;
+      }).join('\n');
 
-        if (issues.length === 0)
-          return `No issues where found on "${username}/${repository}`;
+      if (issues.length === 0)
+        return `No issues where found on "${username}/${repository}`;
 
-        return `${title}:\n${formattedIssues}`;
-      }).catch(e => {
-        if (e instanceof NotFound)
-          throw new NotFound('Repository', `${username}/${repository}`);
-        throw e;
-      });
+      return `${title}:\n${formattedIssues}`;
+    }).catch(e => {
+      if (e instanceof NotFound)
+        throw new NotFound('Repository', `${username}/${repository}`);
+      throw e;
+    });
   })
 };

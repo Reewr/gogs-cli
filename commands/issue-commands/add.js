@@ -65,9 +65,8 @@ module.exports = {
     const url      = `/repos/${fullname}/issues`;
     const res      = request.post(url, options);
 
-    return res.waitForSuccess()
-      .then(() => {
-        return `The issue "${argv.title}" was added in ${fullname}`;
-      });
+    return res.then(() => {
+      return `The issue "${argv.title}" was added in ${fullname}`;
+    });
   })
 };
