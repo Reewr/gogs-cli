@@ -17,7 +17,7 @@ In your bashrc you can then add `~/.global_npm_packages/bin` to your PATH.
 The first commands you want to run is to set the configuration file. If you want to save the configuration file to somewhere else than `~/.config/gogs-cli/config.json`, please specify a path using the `GOGS_CLI_CONFIG_PATH` environment variable.
 
 ```
-gogs config set host <INSERT_GOGS_HOSTNAME>
+gogs config set hostname <INSERT_GOGS_HOSTNAME>
 gogs config set token <INSERT_TOKEN>
 ```
 
@@ -65,7 +65,7 @@ In order to test, you will need a local Gogs instance that the cli can contact a
 
 When this is done, the following environment variables must be defined:
 
-**GOGS_CLI_TEST_HOST**
+**GOGS_CLI_TEST_HOSTNAME**
 
 The hostname of the Gogs testing instance
 
