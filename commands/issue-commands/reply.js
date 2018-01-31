@@ -145,9 +145,8 @@ module.exports = {
     const url = `/repos/${fullname}/issues/${argv.issuenumber}/comments`;
     const res = request.post(url, options);
 
-    return res.waitForSuccess()
-      .then(() => {
-        return `Comment added to issue "#${argv.issuenumber}" in ${fullname}`;
-      });
+    return res.then(() => {
+      return `Comment added to issue "#${argv.issuenumber}" in ${fullname}`;
+    });
   })
 };

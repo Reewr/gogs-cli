@@ -11,26 +11,31 @@ module.exports = {
 
   // extra handlers
   get: function(username, repository, id) {
-    return new Promise((resolve, reject) => {
-      const res = request.get(`/repos/${username}/${repository}/issues/${id}`);
+    const res = request.get(`/repos/${username}/${repository}/issues/${id}`);
 
-      res.on('error', reject);
-      res.on(404, () => {
-        reject(new NotFound(
-          `Issue #${id} in "${username}/${repository}" not found.`));
+    return res
+      .then(u => u)
+      .catch(err => {
+        if (err instanceof NotFound)
+          throw new NotFound(
+            `Issue #${id} in "${username}/${repository}" not found.`);
+
+        throw err;
       });
-      res.on('success', resolve);
-    });
   },
+
 
   getComments: function(username, repository, id) {
     const url = `/repos/${username}/${repository}/issues/${id}/comments`;
     const res = request.get(url);
 
-    return new Promise((resolve, reject) => {
-      res.on('error', reject);
-      res.on(404, () => reject(new NotFound('Repository', `${username}/${repository}`)));
-      res.on('success', resolve);
-    });
+    return res
+      .then(c => c)
+      .catch(err => {
+        if (err instanceof NotFound)
+          throw new NotFound('Repository', `${username}/${repository}`);
+
+        throw err;
+      });
   }
 };

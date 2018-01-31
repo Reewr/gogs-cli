@@ -1,7 +1,7 @@
 'use strict';
 const request = require('../../lib/request');
-const {InvalidArgument} = require('../../lib/errors');
-const mkHandler = require('../../lib/handler').mkHandler;
+const {InvalidArgument, UnknownStatusCode} = require('../../lib/errors');
+const {mkHandler} = require('../../lib/handler');
 
 module.exports = {
   command: 'add <repository>',
@@ -73,12 +73,15 @@ module.exports = {
 
     const res = request.post(url, options);
 
-    res.on(422, () => console.error('Err: Repository already exists'));
-    return res.waitForSuccess()
-      .then(() => {
-        if (isOrgan)
-          return `Created repository "${username}/${repository}"`;
-        return `Created repository "${username}" on current user`;
-      });
+    return res.then(() => {
+      if (isOrgan)
+        return `Created repository "${username}/${repository}"`;
+      return `Created repository "${username}" on current user`;
+    }).catch(err => {
+      if (err instanceof UnknownStatusCode && err.statusCode === 422)
+        return 'Err: The repository you tried to create already exists';
+
+      throw err;
+    });
   })
 };

@@ -7,17 +7,14 @@ module.exports = {
   desc   : 'Retrieve a user by username',
   builder: {},
   handler: mkHandler(async function(argv) {
-    const res = request.get(`/users/${argv.username}`);
+    const user = await request.get(`/users/${argv.username}`);
 
-    return res.waitForSuccess()
-      .then((foundUser) => {
-        return [
-          `ID        : ${foundUser.id}`,
-          `Username  : ${foundUser.username}`,
-          `Full name : ${foundUser.full_name}`,
-          `Email     : ${foundUser.email}`,
-          `Avatar URL: ${foundUser.avatar_url}`,
-        ].join('\n');
-      });
+    return [
+      `ID        : ${user.id}`,
+      `Username  : ${user.username}`,
+      `Full name : ${user.full_name}`,
+      `Email     : ${user.email}`,
+      `Avatar URL: ${user.avatar_url}`,
+    ].join('\n');
   })
 };
