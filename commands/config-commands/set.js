@@ -9,13 +9,15 @@ module.exports = {
     return yargs.positional('option', {
       describe: 'the option to set the value for',
       type    : 'string',
-      choices : config.allowedOptions,
+      choices : config.getAvailableOptions(),
     }).completion('option', function(current) {
-      return config.allowedOptions.filter(x => x.indexOf(current !== -1));
+      return config
+        .getAvailableOptions()
+        .filter(x => x.indexOf(current !== -1));
     });
   },
   handler: mkHandler((argv) => {
-    config[argv.option] = argv.value;
+    config.setOption(argv.option, argv.value);
     return `Successfully set ${argv.option}`;
   })
 };
