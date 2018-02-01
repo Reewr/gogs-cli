@@ -2,6 +2,22 @@
 
 This file will contain the most important changes in the different versions of the package.
 
+While the version is below v1, it will follow this versioning:
+
+Minor version change (0.x.0) means a breaking change that may require you to do some reconfigurations.
+
+Patch version changes (0.0.x) means a feature and/or bug fix.
+
+# 0.2.2
+
+**Date**: 02.02.2018<br>
+**Changes**:
+**Fixes**: #3<br>
+
+Adds the option of listing all repositories for a specific user or organization. This can be done by specifying the optional name after `gogs repo list`, such as `gogs repo list reewr`.
+
+Fixes an issue with column formatting when listing repositories that could cause newlines to contain whitespace on the left side of the text, which was not ideal.
+
 # 0.2.1
 
 **Date**: 31.01.2018<br>
