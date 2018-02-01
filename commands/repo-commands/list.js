@@ -50,6 +50,11 @@ module.exports = {
     else
       repos = await request.get('/user/repos');
 
+    if (repos.length === 0 && argv.username_or_orgname)
+      return `No repositories were found for ${argv.username_or_orgname}`;
+    else if (repos.length === 0)
+      return 'No repositories were found that you have write access to';
+
     let longestName = 0;
     const formatted = repos
       .map(x => {
