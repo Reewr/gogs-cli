@@ -33,6 +33,9 @@ module.exports = {
     if (argv.l)
       return `${formatted.map(x => x.trim()).join('\n')}`;
 
-    return wrap(formatted.join(' '), 80, {trim: false});
+    return wrap(formatted.join(' '), 80, {trim: false})
+      .split('\n')
+      .map(x => x.replace(/^\s+/g, ''))
+      .join('\n');
   })
 };
