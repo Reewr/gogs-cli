@@ -119,6 +119,69 @@ describe('gogs issue read', function() {
   });
 });
 
+describe('gogs issue reply', function() {
+  const repoName = 'issue-reply-test_' + Date.now();
+  const fullname = `${USERNAME}/${repoName}`;
+
+  before(async() => {
+    await run(`repo add ${repoName}`);
+    await run(`issue add ${fullname} Title -m "Some text"`);
+  });
+
+  it('throws on missing repository and issue number, "issue reply"', async function() {
+    const result = await run('issue reply');
+
+    expect(result.err).to.not.equal(null);
+    expect(result.value).to.equal(null);
+    expect(result.err.message).to.equal('Not enough non-option arguments: got 0, need at least 2');
+  });
+
+  it(`throws on missing issue number, "issue reply ${fullname}"`, async function() {
+    const result = await run(`issue reply ${fullname}`);
+
+    expect(result.err).to.not.equal(null);
+    expect(result.value).to.equal(null);
+    expect(result.err.message).to.equal('Not enough non-option arguments: got 1, need at least 2');
+  });
+
+  it('throws on invalid repository name, "issue reply INVALIDREPOSITORYNAME 1"', async function() {
+    const result = await run('issue read invalidname 1');
+
+    expect(result.err).to.be.instanceOf(errors.InvalidArgument);
+    expect(result.value).to.equal(null);
+  });
+
+  it(`throws on invalid issue number, "issue reply ${fullname} NaN"`, async function() {
+    const result = await run(`issue reply ${fullname} something`);
+
+    expect(result.err).to.be.instanceOf(errors.InvalidArgument);
+    expect(result.value).to.equal(null);
+  });
+
+
+  it('throws on not found repository, "issue reply not/found"', async function() {
+    const result = await run('issue reply not/found 2');
+
+    expect(result.err).to.be.instanceOf(errors.NotFound);
+    expect(result.value).to.equal(null);
+  });
+
+  it('throws on not found issue, "issue reply not/found"', async function() {
+    const result = await run(`issue reply ${fullname} 8`);
+
+    expect(result.err).to.be.instanceOf(errors.NotFound);
+    expect(result.value).to.equal(null);
+  });
+
+  it('should reply the issue', async function() {
+    const result = await run(`issue reply ${fullname} 1 -m "Some message"`);
+
+    expect(result.err).to.equal(null);
+
+    expect(result.value).to.contain('Comment added to issue "#1"');
+  });
+});
+
 describe('gogs issue list', function() {
   const repoName = 'issue-list-test_' + Date.now();
   const fullname = `${USERNAME}/${repoName}`;
