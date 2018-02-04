@@ -11,28 +11,11 @@ const listForRepository = async function(argv, username, repository) {
   const fullname = `${username}/${repository}`;
 
   return res.then(issues => {
-    const formatted = issues.filter(x => {
-      if (argv.p && !x.pull_request)
-        return false;
-
-      if (argv.n && x.pull_request)
-        return false;
-
-      return true;
-    }).map(x => {
-      const str = `#${x.number} ${x.title} (${x.created_at})`;
-
-      if (x.pull_request)
-        return str + ' (pull request)';
-      return str;
+    const formatted = issues.map(x => {
+      return `#${x.number} ${x.title} (${x.created_at})`;
     });
 
-    const title = !argv.p ?
-      `${issues.length} issue(s) was found on "${fullname}"` :
-      `${formatted.length} pull request(s) were found on ${fullname}`;
-
-    if (formatted.length === 0 && argv.p)
-      return `No pull requests were found on "${fullname}"`;
+    const title = `${issues.length} issue(s) was found on "${fullname}"`;
 
     if (issues.length === 0)
       return `No issues were found on "${fullname}"`;
@@ -48,17 +31,7 @@ const listForRepository = async function(argv, username, repository) {
 module.exports = {
   command: 'list <repository>',
   desc   : 'List all issues for a specific repository',
-  builder: function(yargs) {
-    return yargs.option('p', {
-      alias   : 'pull-requests',
-      describe: 'Only lists pull requests',
-      boolean : true
-    }).option('n', {
-      alias   : 'no-pull-requests',
-      describe: 'Do not include pull requests',
-      boolean : true
-    });
-  },
+  builder: {},
   handler: handler.mkHandler(async function(argv) {
     const [username, repository] = argv.repository.split('/');
 
