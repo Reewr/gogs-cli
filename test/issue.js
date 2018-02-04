@@ -110,12 +110,10 @@ describe('gogs issue read', function() {
     expect(result.err).to.equal(null);
 
     const lines = result.value.split('\n');
-    const date  = /Date {2}: \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/g;
 
-    expect(lines[0]).to.equal('#1 Title');
-    expect(lines[1]).to.equal('State : open');
-    expect(lines[2]).to.equal('Author: test');
-    expect(lines[3].match(date)).to.not.equal(null);
+    expect(lines[0]).to.equal('#1 - Title');
+    expect(lines[1]).to.contain(`${USERNAME} opened this issue`);
+    expect(lines[3]).to.contain('Some text');
   });
 });
 
@@ -205,7 +203,7 @@ describe('gogs issue list', function() {
   it('throws on "issue list INVALIDREPOSITORYNAME"', async function() {
     const result = await run('issue list invalidname');
 
-    expect(result.err).to.be.instanceOf(errors.InvalidArgument);
+    expect(result.err).to.be.instanceOf(errors.NotFound);
     expect(result.value).to.equal(null);
   });
 
@@ -224,6 +222,6 @@ describe('gogs issue list', function() {
     const list = (result.value || '').split('\n');
 
     expect(list).to.be.an('array').with.lengthOf(5);
-    expect(list[0]).to.contain('4 issue(s) was found:');
+    expect(list[0]).to.contain('open issues');
   });
 });
