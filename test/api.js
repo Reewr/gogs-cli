@@ -125,11 +125,21 @@ describe('api.addAPIEndpoint', function() {
     expect(() => f1({name: ['string', 5]})).to.throw();
     expect(() => f1({name: 'reads'})).to.throw();
     expect(() => f1({name: 'read'})).to.not.throw();
-    expect(() => f1({name: 'read'})).to.not.throw();
 
     expect(() => f1({noChoices: 'read'})).to.not.throw();
     expect(() => f1({noChoices: 'something'})).to.not.throw();
     expect(() => f1({noChoices: 5})).to.throw();
+  });
+
+  it('should parse options and ignore undefined in non-required types', function() {
+    const f1 = API.createAPIWrapper('POST /somewhere', {
+      name: {type: 'string', choices: ['read', 'write', 'admin']}
+    });
+
+
+    expect(() => f1({})).to.not.throw();
+    expect(() => f1({name: undefined})).to.not.throw();
+    expect(() => f1({name: 'read'})).to.not.throw();
   });
 
 
