@@ -1,7 +1,7 @@
 'use strict';
-const request = require('../../lib/request');
 const {InvalidArgument, UnknownStatusCode} = require('../../lib/errors');
 const {mkHandler} = require('../../lib/handler');
+const {gogs} = require('../../lib/api');
 
 module.exports = {
   command: 'add <repository>',
@@ -60,7 +60,6 @@ module.exports = {
         'Only specify repository name, NOT username when not creating an organization repository');
 
     const isOrgan = argv.organization;
-    const url = isOrgan ? `/org/${username}/repos` : '/user/repos';
     const options = {
       name       : isOrgan ? repository : username,
       description: argv.description,
@@ -71,17 +70,20 @@ module.exports = {
       readme     : argv.readme || undefined
     };
 
-    const res = request.post(url, options);
-
-    return res.then(() => {
+    try {
       if (isOrgan)
-        return `Created repository "${username}/${repository}"`;
-      return `Created repository "${username}" on current user`;
-    }).catch(err => {
+        await gogs.repository.createOnOrg(username, options);
+      else
+        await gogs.repository.create(options);
+    } catch (err) {
       if (err instanceof UnknownStatusCode && err.statusCode === 422)
         return 'Err: The repository you tried to create already exists';
 
       throw err;
-    });
+    }
+
+    if (isOrgan)
+      return `Created repository "${username}/${repository}"`;
+    return `Created repository "${username}" on current user`;
   })
 };
