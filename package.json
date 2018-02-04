@@ -28,7 +28,6 @@
   "homepage": "https://github.com/reewr/gogs-cli#readme",
   "dependencies": {
     "chalk": "^2.3.0",
-    "logule": "^2.1.0",
     "ora": "^1.4.0",
     "request": "^2.83.0",
     "wrap-ansi": "^3.0.1",
