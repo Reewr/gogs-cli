@@ -27,6 +27,16 @@ const formatIssueListForRepo = function(argv, fullname, issues) {
   return `${title}\n${formatted.join('\n')}`;
 };
 
+/**
+ * List the issues of one specific repository. It performs a single
+ * request and goes directly to the repository in mind. If it does not
+ * exist, an error will be thrown.
+ *
+ * @param {Arguments} argv
+ * @param {String} username
+ * @param {String} repository
+ * @returns {undefined}
+ */
 const listForRepository = async function(argv, username, repository) {
   const fullname = `${username}/${repository}`;
 
@@ -46,6 +56,54 @@ const listForRepository = async function(argv, username, repository) {
       throw new NotFound('Repository', `${fullname}`);
     throw err;
   }
+};
+
+/**
+ * Retrieves all the issues for a user or an organization by first
+ * requesting to get all the repositories on the user or organization,
+ * then for each of those repositories, request the issues.
+ *
+ * @param {Arguments} argv
+ * @param {String} name
+ * @returns {null}
+ */
+const listForUserOrOrg = async function(argv, name) {
+  argv._icon.start(`Loading repositories for ${name}...`);
+  const repos = await gogs.repository.listForOrgOrUser(name);
+
+  if (repos.length === 0) {
+    argv._icon.info('There are no repositories and therefore no issues');
+    return;
+  }
+
+  argv._icon.text = 'Loading issues...';
+  const multiIssues = await Promise.all(repos.map(x => {
+    const [username, repository] = x.full_name.split('/');
+
+    return gogs.issue.list(username, repository).then(issues => {
+      return {fullname: x.full_name, issues: issues};
+    });
+  }));
+
+  let number   = 0;
+  const filtered = multiIssues.filter(x => {
+    number += x.issues.length;
+    return x.issues.length !== 0;
+  });
+
+  if (filtered.length === 0) {
+    argv._icon.info(
+      `No issues were found in any of the ${repos.length} repositories`);
+    return;
+  }
+
+  const numIssues = `${number} issue${number === 1 ? '' : 's'}`;
+  const numRepo   = `${repos.length} ${repos.length === 1 ? 'repository' : 'repositories'}`;
+
+  argv._icon.succeed(`Found ${numIssues} in ${numRepo}`).stop();
+  return filtered.map(x => {
+    return formatIssueListForRepo(argv, x.fullname, x.issues);
+  }).join('\n');
 };
 
 /**
@@ -108,7 +166,7 @@ const listAssigned = async function(argv) {
 
 module.exports = {
   command: 'list <repository>',
-  desc   : 'List all issues for a specific repository',
+  desc   : 'List all issues for a specific repository, user or organization',
   builder: function(yargs) {
     return yargs
       .option('d', {
@@ -122,6 +180,9 @@ module.exports = {
 
     if (username && repository)
       return await listForRepository(argv, username, repository);
+
+    if (username && !repository)
+      return await listForUserOrOrg(argv, username);
 
     if (!username || !repository)
       throw new InvalidArgument('username/repository');
