@@ -18,6 +18,8 @@ Adds the option of listing all repositories for a specific user or organization.
 
 Fixes an issue with column formatting when listing repositories that could cause newlines to contain whitespace on the left side of the text, which was not ideal.
 
+Removes filtering by pull requests in `gogs issue list` as this did not work at all. Listing issues did not list any pull requests. Since the pull request API has not yet been implemented, this is, for the moment, impossible to do.
+
 # 0.2.1
 
 **Date**: 31.01.2018<br>
