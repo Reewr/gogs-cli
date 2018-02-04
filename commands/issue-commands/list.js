@@ -5,6 +5,20 @@ const format      = require('../../lib/format');
 const {InvalidArgument, NotFound}  = require('../../lib/errors');
 const chalk       = require('chalk');
 
+/**
+ * Formats the issues in a format that looks similar to:
+ *
+ * # reewr/myrepo open issues
+ *   1: This is the title (~3 minutes ago)
+ *   2: This is another title (~8 minutes ago)
+ *   3: This is that title (~10 days ago)
+ *
+ * @private
+ * @param {Arguments} argv
+ * @param {String} fullname
+ * @param {Object[]} issues
+ * @returns {String}
+ */
 const formatIssueListForRepo = function(argv, fullname, issues) {
   const getFormattedDate = (x) => {
     const d = chalk`{gray ({yellow ${format.since(x.created_at)}}}`;
@@ -32,6 +46,7 @@ const formatIssueListForRepo = function(argv, fullname, issues) {
  * request and goes directly to the repository in mind. If it does not
  * exist, an error will be thrown.
  *
+ * @private
  * @param {Arguments} argv
  * @param {String} username
  * @param {String} repository
