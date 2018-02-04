@@ -12,13 +12,19 @@ Patch version changes (0.0.x) means a feature and/or bug fix.
 
 **Date**: 02.02.2018<br>
 **Changes**:
-**Fixes**: #3<br>
+**Fixes**: #3, #4, #5<br>
 
 Adds the option of listing all repositories for a specific user or organization. This can be done by specifying the optional name after `gogs repo list`, such as `gogs repo list reewr`.
 
 Fixes an issue with column formatting when listing repositories that could cause newlines to contain whitespace on the left side of the text, which was not ideal.
 
 Removes filtering by pull requests in `gogs issue list` as this did not work at all. Listing issues did not list any pull requests. Since the pull request API has not yet been implemented, this is, for the moment, impossible to do.
+
+Adds `gogs issue list assigned` that retrieves all the issues that are assigned to you.
+
+Adds an indication of loading since some commands take quite some time. It also feels better to give feedback through it.
+
+`gogs issue list` can now take an organization or a username to list all the issues within the organization's repositories or within the user's repositories.
 
 # 0.2.1
 
