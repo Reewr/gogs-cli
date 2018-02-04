@@ -17,7 +17,7 @@ describe('api.addAPIEndpoint', function() {
     process.env.GOGS_CLI_TEST_USERNAME = process.env.GOGS_CLI_TEST_USERNAME || 'username';
     process.env.GOGS_CLI_TEST_ORGANIZATION = process.env.GOGS_CLI_TEST_ORGANIZATION || 'organization';
     util.checkEnvironment();
-    server = http.createServer(onRequest);
+    server = http.createServer((req, res) => onRequest(req, res));
     server.listen(9000, done);
   });
 
@@ -148,7 +148,7 @@ describe('api.addAPIEndpoint', function() {
 
     onRequest = (req, res) => {
       expect(req.method).to.equal('GET');
-      expect(req.url).to.equal('/somewhere/reewr');
+      expect(req.url).to.equal('/api/v1/user/reewr');
 
       res.end();
     };
@@ -163,9 +163,9 @@ describe('api.addAPIEndpoint', function() {
 
     onRequest = (req, res) => {
       expect(req.method).to.equal('POST');
-      expect(req.url).to.equal('/users');
-      expect(req.headers).to.have.property('Content-Type');
-      expect(req.headers['Content-Type']).to.equal('application/json');
+      expect(req.url).to.equal('/api/v1/users');
+      expect(req.headers).to.have.property('content-type');
+      expect(req.headers['content-type']).to.equal('application/json');
 
       let data = '';
 
@@ -174,12 +174,12 @@ describe('api.addAPIEndpoint', function() {
         data += c;
       });
       req.on('end', () => {
-        expect(JSON.parse(data)).to.equal({
+        expect(JSON.parse(data)).to.deep.equal({
           name: 'reewr'
         });
-      });
 
-      res.end();
+        res.end();
+      });
     };
 
     await f1({name: 'reewr'});
