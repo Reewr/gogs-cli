@@ -1,30 +1,7 @@
 'use strict';
-const request = require('../../lib/request');
-const errors = require('../../lib/errors');
-const mkHandler = require('../../lib/handler').mkHandler;
+const {mkHandler} = require('../../lib/handler');
+const {gogs} = require('../../lib/api');
 const wrap = require('wrap-ansi');
-
-const getRepositoriesForUserOrOrg = function(name) {
-  return request.get(`/users/${name}/repos`)
-    .then(repos => {
-      return repos.filter(x => {
-        const [username] = x.full_name.split('/');
-
-        return username === name;
-      });
-    })
-    .catch(err => {
-      if (err instanceof errors.NotFound ||
-          err instanceof errors.InternalGogsError)
-        return request.get(`/orgs/${name}/repos`);
-      throw err;
-    })
-    .then(repos => repos)
-    .catch(err => {
-      if (err instanceof errors.NotFound)
-        throw new errors.NotFound('Repository', name);
-    });
-};
 
 module.exports = {
   command: 'list [username_or_orgname]',
@@ -46,9 +23,9 @@ module.exports = {
     let repos = [];
 
     if (argv.username_or_orgname)
-      repos = await getRepositoriesForUserOrOrg(argv.username_or_orgname);
+      repos = await gogs.repository.listForUserOrOrg(argv.username_or_orgname);
     else
-      repos = await request.get('/user/repos');
+      repos = await gogs.repository.list();
 
     if (repos.length === 0 && argv.username_or_orgname)
       return `No repositories were found for ${argv.username_or_orgname}`;
