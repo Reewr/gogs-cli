@@ -224,6 +224,6 @@ describe('gogs issue list', function() {
     const list = (result.value || '').split('\n');
 
     expect(list).to.be.an('array').with.lengthOf(5);
-    expect(list[0]).to.equal('4 issue(s) was found:');
+    expect(list[0]).to.contain('4 issue(s) was found:');
   });
 });
