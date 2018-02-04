@@ -6,23 +6,77 @@ const mkHandler       = require('../../lib/handler').mkHandler;
 const getIssue        = require('../issue').get;
 const getComments     = require('../issue').getComments;
 const InvalidArgument = errors.InvalidArgument;
+const format          = require('../../lib/format');
 
+const alink = /^<a href="[\/\w+]+\/(.+)">(.+)<\/a>$/g;
 const formatAuthor = function(user) {
-  let author = user.username;
+  let author = '@' + user.username;
 
   if (user.full_name !== '')
-    author = `${user.full_name}(${user.username})`;
+    author = `${user.full_name}(@${user.username})`;
 
   return author;
 };
 
 const formatComment = function(comment, maxNumColumns) {
   return [
-    chalk`{yellow Author}: ${formatAuthor(comment.user)}`,
-    chalk`{yellow Date  }: ${comment.created_at}`,
-    '',
-    wrapAnsi(comment.body, maxNumColumns),
+    chalk`${formatAuthor(comment.user)} commented {yellow ${format.since(comment.created_at)}}:`,
+    wrapAnsi(comment.body, maxNumColumns - 4).split('\n').map(x => '\t' + x).join('\n'),
   ].join('\n');
+};
+
+/**
+ * Gogs is not really that good at reporting what comments do. For
+ * instance, it is illegal (I think) to have a comment without content,
+ * but closing/opening issues are considered comments with empty body.
+ *
+ * In order to handle these edge cases, this function assumes that every
+ * issue starts out being open. For each comment without a body, it is
+ * assumed that this is changing a state on the issue.
+ *
+ * In addition, references made through commits are also considered
+ * comments, but only contain an '<a>' link to the commit in question.
+ *
+ * @param {Object} issue
+ * @param {Object[]} comments
+ * @param {Number} maxNumColumns
+ * @returns {String}
+ */
+const handleEdgeCaseComments = function(issue, comments, maxNumColumns) {
+  // assume that every issue starts as open
+  let isOpen = true;
+
+  return comments.map(comment => {
+    // assume that empty body comments are state changes,
+    // since they do not specify this specifically.
+    if (comment.body === '') {
+      const formatted = `${formatAuthor(comment.user)} ${isOpen ? 'closed' : 'reopened'} issue`;
+
+      isOpen = !isOpen;
+      return formatted + chalk` {yellow ${format.since(comment.created_at)}}`;
+    }
+
+    const match = alink.exec(comment.body);
+
+    if (match) {
+      return '' +
+        `${formatAuthor(comment.user)} references this from a commit` +
+                        chalk` {yellow ${format.since(comment.created_at)}}:` +
+                        chalk`\n\t ${match[2]} {gray (${match[1]})}`;
+    }
+
+    return formatComment(comment, maxNumColumns);
+  }).join('\n\n');
+};
+
+const mkTitle = function(user, createdAt, state) {
+  const author = formatAuthor(user);
+  const since  = format.since(createdAt);
+  const color = state === 'closed' ?
+    chalk`{red ${state}}` :
+    chalk`{green ${state}}`;
+
+  return chalk`${author} opened this issue {yellow ${since}} ${color}`;
 };
 
 module.exports = {
@@ -49,24 +103,24 @@ module.exports = {
     if (typeof number !== 'number' || isNaN(number))
       throw new InvalidArgument('issue number');
 
+    argv._icon.start(`Loading comments for ${username}/${repo}#${number}`);
     const issue      = await getIssue(username, repo, number);
     const comments   = await getComments(username, repo, number);
-    const stateColor = issue.state === 'closed' ? 'red' : 'green';
+
+    argv._icon.text = 'Formatting data';
+
     const body = issue.body === '' ? 'There is no content yet' : issue.body;
     const content = [
-      chalk`{green #${issue.number}} ${issue.title}`,
-      chalk`{yellow State }: {${stateColor} ${issue.state}}`,
-      chalk`{yellow Author}: ${formatAuthor(issue.user)}`,
-      chalk`{yellow Date  }: ${issue.created_at}`,
-      `${wrapAnsi(body, argv['max-columns'])}`,
-      '---',
+      chalk`{gray #${issue.number}} - ${issue.title}`,
+      mkTitle(issue.user, issue.created_at, issue.state),
+      issue.labels.map(x => chalk.bgHex(`#${x.color}`)(' ' + x.name + ' ')).join(' '),
+      wrapAnsi(body, argv['max-columns'] - 4).split('\n').map(x => '\t' + x).join('\n'),
+      '',
     ];
 
-    content.push(
-      comments
-        .map(x => formatComment(x, argv['max-columns']))
-        .join('\n---\n'));
+    content.push(handleEdgeCaseComments(issue, comments, argv['max-columns']));
 
-    return content.join('\n');
+    argv._icon.stop().clear();
+    return content.join('\n') + '\n';
   })
 };
