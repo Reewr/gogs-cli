@@ -4,7 +4,6 @@ const {gogs}      = require('../../lib/api');
 const format      = require('../../lib/format');
 const {InvalidArgument, NotFound}  = require('../../lib/errors');
 const chalk       = require('chalk');
-const ora         = require('ora');
 
 const formatIssueListForRepo = function(argv, fullname, issues) {
   const getFormattedDate = (x) => {
@@ -25,23 +24,28 @@ const formatIssueListForRepo = function(argv, fullname, issues) {
 
   const title = chalk`{greenBright # ${fullname} open issues}`;
 
-  if (issues.length === 0)
-    return `No issues were found on "${fullname}"`;
-
   return `${title}\n${formatted.join('\n')}`;
 };
 
 const listForRepository = async function(argv, username, repository) {
-  const res = gogs.issue.list(username, repository);
   const fullname = `${username}/${repository}`;
 
-  return res.then(issues => {
+  try {
+    argv._icon.start(`Loading issues from ${username}/${repository}`);
+    const issues = await gogs.issue.list(username, repository);
+
+    if (issues.length === 0) {
+      argv._icon.info('No issues were found');
+      return;
+    }
+
+    argv._icon.succeed(`Found ${issues.length} issues`);
     return formatIssueListForRepo(argv, fullname, issues);
-  }).catch(e => {
-    if (e instanceof NotFound)
+  } catch (err) {
+    if (err instanceof NotFound)
       throw new NotFound('Repository', `${fullname}`);
-    throw e;
-  });
+    throw err;
+  }
 };
 
 /**
@@ -61,16 +65,16 @@ const listForRepository = async function(argv, username, repository) {
  * @returns {Promise}
  */
 const listAssigned = async function(argv) {
-  const icon          = ora('Loading repositories').start();
+  argv._icon.start('Loading repositories');
   const [user, repos] = await Promise.all([gogs.user.forToken(),
                                            gogs.repository.list()]);
 
   if (repos.length === 0) {
-    icon.info('There are no repositories and therefore no issues');
+    argv._icon.info('There are no repositories and therefore no issues');
     return;
   }
 
-  icon.text = 'Loading issues';
+  argv._icon.text = 'Loading issues';
   const multiIssues = await Promise.all(repos.map(x => {
     const [username, repository] = x.full_name.split('/');
 
@@ -92,11 +96,11 @@ const listAssigned = async function(argv) {
   });
 
   if (filtered.length === 0) {
-    icon.info('You have no assigned issues in any repository');
+    argv._icon.info('You have no assigned issues in any repository');
     return;
   }
 
-  icon.succeed(`Found ${number} of assigned issue(s)`).stop();
+  argv._icon.succeed(`Found ${number} of assigned issue(s)`).stop();
   return filtered.map(x => {
     return formatIssueListForRepo(argv, x.fullname, x.issues);
   }).join('\n');

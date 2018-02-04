@@ -1,6 +1,7 @@
 #!/usr/bin/node
 'use strict';
 const gogs = require('../index');
+const ora  = require('ora');
 const GogsCliError = require('../lib/errors').GogsCliError;
 
 gogs(process.argv.slice(2))
@@ -10,7 +11,7 @@ gogs(process.argv.slice(2))
   })
   .catch(err => {
     if (err instanceof GogsCliError) {
-      console.error(err.message);
+      ora().fail(err.message);
       process.exit(err.exitCode || 1);
     } else {
       console.error(err);
