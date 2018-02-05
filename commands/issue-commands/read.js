@@ -1,10 +1,9 @@
 'use strict';
 const errors          = require('../../lib/errors');
 const mkHandler       = require('../../lib/handler').mkHandler;
-const getIssue        = require('../issue').get;
-const getComments     = require('../issue').getComments;
 const InvalidArgument = errors.InvalidArgument;
 const format          = require('../../lib/format');
+const {gogs}          = require('../../lib/api');
 
 module.exports = {
   command: 'read <repository> <number>',
@@ -31,8 +30,8 @@ module.exports = {
       throw new InvalidArgument('issue number');
 
     argv._icon.start(`Loading comments for ${username}/${repo}#${number}`);
-    const issue      = await getIssue(username, repo, number);
-    const comments   = await getComments(username, repo, number);
+    const issue      = await gogs.issue.get(username, repo, number);
+    const comments   = await gogs.issue.comments.get(username, repo, number);
 
     argv._icon.text = 'Formatting data';
 
