@@ -9,18 +9,10 @@ const InvalidArgument = errors.InvalidArgument;
 const format          = require('../../lib/format');
 
 const alink = /^<a href="[\/\w+]+\/(.+)">(.+)<\/a>$/g;
-const formatAuthor = function(user) {
-  let author = '@' + user.username;
-
-  if (user.full_name !== '')
-    author = `${user.full_name}(@${user.username})`;
-
-  return author;
-};
 
 const formatComment = function(comment, maxNumColumns) {
   return [
-    chalk`${formatAuthor(comment.user)} commented {yellow ${format.since(comment.created_at)}}:`,
+    chalk`${format.author(comment.user)} commented {yellow ${format.since(comment.created_at)}}:`,
     wrapAnsi(comment.body, maxNumColumns - 4).split('\n').map(x => '\t' + x).join('\n'),
   ].join('\n');
 };
@@ -50,7 +42,7 @@ const handleEdgeCaseComments = function(issue, comments, maxNumColumns) {
     // assume that empty body comments are state changes,
     // since they do not specify this specifically.
     if (comment.body === '') {
-      const formatted = `${formatAuthor(comment.user)} ${isOpen ? 'closed' : 'reopened'} issue`;
+      const formatted = `${format.author(comment.user)} ${isOpen ? 'closed' : 'reopened'} issue`;
 
       isOpen = !isOpen;
       return formatted + chalk` {yellow ${format.since(comment.created_at)}}`;
@@ -60,7 +52,7 @@ const handleEdgeCaseComments = function(issue, comments, maxNumColumns) {
 
     if (match) {
       return '' +
-        `${formatAuthor(comment.user)} references this from a commit` +
+        `${format.author(comment.user)} references this from a commit` +
                         chalk` {yellow ${format.since(comment.created_at)}}:` +
                         chalk`\n\t ${match[2]} {gray (${match[1]})}`;
     }
@@ -70,7 +62,7 @@ const handleEdgeCaseComments = function(issue, comments, maxNumColumns) {
 };
 
 const mkTitle = function(user, createdAt, state) {
-  const author = formatAuthor(user);
+  const author = format.author(user);
   const since  = format.since(createdAt);
   const color = state === 'closed' ?
     chalk`{red ${state}}` :

@@ -6,23 +6,8 @@ const mkHandler       = require('../../lib/handler').mkHandler;
 const getIssue        = require('../issue').get;
 const getComments     = require('../issue').getComments;
 const wrapAnsi        = require('wrap-ansi');
+const format          = require('../../lib/format');
 const InvalidArgument = errors.InvalidArgument;
-
-/**
- * Formats the author, returning full name(username) if the fullname and
- * the username both exists, otherwise returns the username
- *
- * @param {Object} user
- * @returns {String}
- */
-const formatAuthor = function(user) {
-  let author = user.username;
-
-  if (user.full_name !== '')
-    author = `${user.full_name}(${user.username})`;
-
-  return author;
-};
 
 /**
  * Returns the last X comments on the issue in the given repository. If
@@ -51,7 +36,7 @@ const getLastXComments = async function(
   const content = [
     `#${issue.number} ${issue.title}`,
     `**State** : ${issue.state}`,
-    `**Author**: ${formatAuthor(issue.user)}`,
+    `**Author**: ${format.author(issue.user)}`,
     `**Date**  : ${issue.created_at}`,
     `${wrapAnsi(body, 80)}`,
   ];
@@ -64,7 +49,7 @@ const getLastXComments = async function(
   if (include.length) {
     include.forEach(x => {
       content.push('---');
-      content.push(`**Author**: ${formatAuthor(x.user)}`);
+      content.push(`**Author**: ${format.author(x.user)}`);
       content.push(`**Date**  : ${x.created_at}`);
       content.push('');
       content.push(wrapAnsi(x.body, 80));
