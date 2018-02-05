@@ -1,12 +1,9 @@
 'use strict';
-const request         = require('../../lib/request');
 const editor          = require('../../lib/editor');
 const errors          = require('../../lib/errors');
-const mkHandler       = require('../../lib/handler').mkHandler;
-const getIssue        = require('../issue').get;
-const getComments     = require('../issue').getComments;
-const wrapAnsi        = require('wrap-ansi');
 const format          = require('../../lib/format');
+const {mkHandler}     = require('../../lib/handler');
+const {gogs}          = require('../../lib/api');
 const InvalidArgument = errors.InvalidArgument;
 
 /**
@@ -27,33 +24,25 @@ const getLastXComments = async function(
   if (numComments === 0)
     return '';
 
-  const issue = await getIssue(username, repository, id);
-  const comments = await getComments(username, repository, id);
+  const issue    = await gogs.issue.get(username, repository, id);
+  const comments = await gogs.issue.comments.get(username, repository, id);
   const include = comments.slice(comments.length - numComments);
-  const remaining = comments.slice(0, comments.length - numComments);
-  const body = issue.body === '' ? 'There is no content yet' : issue.body;
+  const hidden = comments.slice(0, comments.length - numComments);
 
-  const content = [
-    `#${issue.number} ${issue.title}`,
-    `**State** : ${issue.state}`,
-    `**Author**: ${format.author(issue.user)}`,
-    `**Date**  : ${issue.created_at}`,
-    `${wrapAnsi(body, 80)}`,
-  ];
+  const content = [format.issue(issue, 80, false)];
 
-  if (remaining.length) {
-    content.push('---');
-    content.push(`${remaining.length} hidden comments`);
+  if (hidden.length) {
+    content.push(`${hidden.length} hidden comments`);
+    content.push('');
   }
 
+  const all = include.concat(hidden.map(x => {
+    x.hidden = true;
+    return x;
+  }));
+
   if (include.length) {
-    include.forEach(x => {
-      content.push('---');
-      content.push(`**Author**: ${format.author(x.user)}`);
-      content.push(`**Date**  : ${x.created_at}`);
-      content.push('');
-      content.push(wrapAnsi(x.body, 80));
-    });
+    content.push(format.comments(issue, all, 80, false));
   }
 
   return content.join('\n');
@@ -127,11 +116,13 @@ module.exports = {
     };
 
     const fullname = `${username}/${repository}`;
-    const url = `/repos/${fullname}/issues/${argv.issuenumber}/comments`;
-    const res = request.post(url, options);
 
-    return res.then(() => {
-      return `Comment added to issue "#${argv.issuenumber}" in ${fullname}`;
-    });
+    await gogs.issue.comments.create(
+      username,
+      repository,
+      argv.issuenumber,
+      options);
+
+    return `Comment added to issue "#${argv.issuenumber}" in ${fullname}`;
   })
 };
