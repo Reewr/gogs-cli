@@ -39,6 +39,6 @@ module.exports = {
     const formattedComments = format.comments(issue, comments, argv['max-columns']);
 
     argv._icon.stop().clear();
-    return formattedIssue + formattedComments + '\n';
+    return formattedIssue + '\n' + formattedComments + '\n';
   })
 };
