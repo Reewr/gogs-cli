@@ -59,6 +59,7 @@ describe('format.since', function() {
     expect(() => format.since('2017')).to.not.throw(TypeError);
   });
 
+  // eslint-disable-next-line
   it('should return the duration since the date', function() {
     const aSecondInMs = 1000;
     const aMinuteInMs = aSecondInMs * 60;
@@ -100,5 +101,43 @@ describe('format.since', function() {
     expect(format.since(oneWeekAgo)).to.equal('~1 week ago');
     expect(format.since(oneMonthAgo)).to.equal('~1 month ago');
     expect(format.since(oneYearAgo)).to.equal('~1 year ago');
+  });
+});
+
+describe('format.author', function() {
+  it('should exist as property', function() {
+    expect(format).to.have.property('author');
+    expect(format.author).to.be.a('function');
+  });
+
+  it('should throw on invalid arguments', function() {
+    expect(() => format.author()).to.throw(TypeError);
+    expect(() => format.author(5)).to.throw(TypeError);
+    expect(() => format.author(NaN)).to.throw(TypeError);
+    expect(() => format.author({})).to.throw(TypeError);
+  });
+
+  it('should return the formatted name', function() {
+    expect(format.author({username: 'reewr'})).to.equal('@reewr');
+
+    expect(format.author({
+      username: 'reewr',
+      fullname: 'Alexander Imenes'
+    })).to.equal('Alexander Imenes (@reewr)');
+
+    expect(format.author({
+      username   : 'reewr',
+      'full_name': 'Alexander Imenes'
+    })).to.equal('Alexander Imenes (@reewr)');
+
+    expect(format.author({
+      username: 'reewr',
+      fullname: ''
+    })).to.equal('@reewr');
+
+    expect(format.author({
+      username   : 'reewr',
+      'full_name': ''
+    })).to.equal('@reewr');
   });
 });
