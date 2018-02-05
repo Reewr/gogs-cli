@@ -89,6 +89,7 @@ module.exports = {
   },
   handler: mkHandler(async function(argv) {
     const [username, repository] = argv.repository.split('/');
+    const fullname = `${username}/${repository}`;
 
     if (!repository || !username)
       throw new InvalidArgument('repository and username as USERNAME/REPOSITORY');
@@ -96,33 +97,32 @@ module.exports = {
     if (typeof argv.issuenumber !== 'number' || isNaN(argv.issuenumber))
       throw new InvalidArgument('issue number');
 
+    argv._icon.start(`Loading info for ${fullname}#${argv.issuenumber}`);
     let message = argv.message;
 
     if (argv.n)
       argv.i = 0;
 
-    if (!argv.message) {
+    if (!message) {
+      argv._icon.text = `Loading comments for ${fullname}#${argv.issuenumber}`;
       const comment = await getLastXComments(username,
                                              repository,
                                              argv.issuenumber,
                                              argv.i,
                                              argv.o);
 
+      argv._icon.stop().clear();
       message = await editor('md', comment);
     }
 
-    const options = {
-      body: message,
-    };
-
-    const fullname = `${username}/${repository}`;
+    argv._icon.text = 'Creating new issue';
 
     await gogs.issue.comments.create(
       username,
       repository,
       argv.issuenumber,
-      options);
+      {body: message});
 
-    return `Comment added to issue "#${argv.issuenumber}" in ${fullname}`;
+    argv._icon.succeed(`Comment added to issue "#${argv.issuenumber}" in ${fullname}`);
   })
 };
