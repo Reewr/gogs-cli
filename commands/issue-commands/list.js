@@ -133,6 +133,13 @@ const listForUserOrOrg = async function(argv, name) {
  * 2. Get repositories
  * 3. Get issue for each repository in repositories
  *
+ * Gogs has the /user/issues URL that can be used to retrieve the issues
+ * assigned to the currently logged in user. The problem with using this
+ * one is that it does not contain any information about which
+ * repository it is associated with. Finding that information elsewhere
+ * seems to be difficult given the lack of information there is in
+ * issues.
+ *
  * @private
  * @param {Arguments} argv
  * @returns {Promise}
@@ -148,6 +155,9 @@ const listAssigned = async function(argv) {
   }
 
   argv._icon.text = 'Loading issues';
+
+  // Go through each repository, grab a list of issues and filtering out
+  // those that are not assigned to the user who owns the token
   const multiIssues = await Promise.all(repos.map(x => {
     const [username, repository] = x.full_name.split('/');
 
@@ -162,7 +172,10 @@ const listAssigned = async function(argv) {
     });
   }));
 
-  let number   = 0;
+  let number = 0;
+
+  // Filter out repositories that do not have any issues, while counting
+  // up how many issues are assigned to the current user
   const filtered = multiIssues.filter(x => {
     number += x.issues.length;
     return x.issues.length !== 0;
