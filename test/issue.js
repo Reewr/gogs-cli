@@ -7,8 +7,6 @@ const expect   = chai.expect;
 const {run, checkEnvironment} = require('./helpers/util');
 const USERNAME = process.env.GOGS_CLI_TEST_USERNAME;
 
-checkEnvironment();
-
 chalk.enabled = false;
 
 describe('gogs issue add', function() {
@@ -16,6 +14,7 @@ describe('gogs issue add', function() {
   const fullname = `${USERNAME}/${repoName}`;
 
   before(async() => {
+    checkEnvironment();
     await run(`repo add ${repoName}`);
   });
 
@@ -187,6 +186,7 @@ describe('gogs issue list', function() {
   const fullname = `${USERNAME}/${repoName}`;
 
   before(async() => {
+    checkEnvironment();
     await run(`repo add ${repoName}`);
     await run(`issue add ${fullname} "Test 1" -m "This is the first issue"`);
     await run(`issue add ${fullname} "Test 2" -m "This is the second issue"`);

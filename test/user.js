@@ -1,4 +1,4 @@
-/* globals describe it */
+/* globals before describe it */
 'use strict';
 const chai                    = require('chai');
 const chalk                   = require('chalk');
@@ -7,11 +7,14 @@ const expect                  = chai.expect;
 const {run, checkEnvironment} = require('./helpers/util');
 const USERNAME                = process.env.GOGS_CLI_TEST_USERNAME;
 
-checkEnvironment();
 
 chalk.enabled = false;
 
 describe('gogs user find', function() {
+  before(() => {
+    checkEnvironment();
+  });
+
   it('throws on missing username, "user find"', async function() {
     const result = await run('user find');
 

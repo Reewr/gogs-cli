@@ -8,11 +8,13 @@ const {run, checkEnvironment} = require('./helpers/util');
 const USERNAME = process.env.GOGS_CLI_TEST_USERNAME;
 const ORGANIZATION = process.env.GOGS_CLI_TEST_ORGANIZATION;
 
-checkEnvironment();
-
 chalk.enabled = false;
 
 describe('gogs repo add', function() {
+  before(() => {
+    checkEnvironment();
+  });
+
   it('throws on missing repository name, "repo add"', async function() {
     const result = await run('repo add');
 
@@ -58,6 +60,8 @@ describe('gogs repo list', function() {
   const created = [];
 
   before(async() => {
+    checkEnvironment();
+
     for (let i = 0; i < 5; i++) {
       const repoName = `repo-add-test_${Date.now()}-${i}`;
 
