@@ -26,7 +26,7 @@ Adds an indication of loading since some commands take quite some time. It also 
 
 `gogs issue list` can now take an organization or a username to list all the issues within the organization's repositories or within the user's repositories.
 
-`gogs issue read` now has a whole new format when outputting.
+`gogs issue read` now has a whole new format when outputting, the same goes for `gogs issue reply`, which follows the same formatting as read.
 
 # 0.2.1
 
