@@ -1,6 +1,7 @@
 'use strict';
 const yargs = require('yargs');
 const path = require('path');
+const http = require('http');
 const config = require('../../lib/config');
 
 module.exports.getOutput = async function(fn) {
@@ -35,6 +36,35 @@ module.exports.getOutput = async function(fn) {
     warns: warns,
     errs : errs
   };
+};
+
+module.exports.setupLocalServer = function(port) {
+  let onRequest;
+  const normalOnRequest = (_, res) => {
+    console.log('normal request');
+    res.end();
+  };
+  const server = http.createServer((...args) => {
+    onRequest(...args);
+  });
+
+  server.waitForRequest = function(run) {
+    return new Promise((resolve) => {
+      const onDone = new Promise((r1, r2) => {
+        onRequest = (req, res) => {
+          resolve({req, res, onDone});
+          onRequest = normalOnRequest;
+        };
+        setTimeout(() => {
+          run().then(r1, r2);
+        }, 1);
+      });
+    });
+  };
+
+  return new Promise((resolve, reject) => {
+    server.listen(port, (err) => err ? reject(err) : resolve(server));
+  });
 };
 
 module.exports.run = async function(args) {
