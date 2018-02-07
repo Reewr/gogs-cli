@@ -115,7 +115,7 @@ module.exports = {
       message = await editor('md', comment);
     }
 
-    argv._icon.text = 'Creating new issue';
+    argv._icon.text = 'Creating new comment';
 
     await gogs.issue.comments.create(
       username,
