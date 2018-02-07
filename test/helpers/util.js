@@ -1,7 +1,6 @@
 'use strict';
 const yargs = require('yargs');
 const path = require('path');
-const ora = require('ora');
 const config = require('../../lib/config');
 
 module.exports.getOutput = async function(fn) {
@@ -48,8 +47,34 @@ module.exports.run = async function(args) {
       .help()
       .argv;
 
-    result._icon = ora();
-    result._icon.enabled = false;
+    let tmpText = '';
+
+    result._icon = {
+      set text(a) {
+        tmpText = a;
+        console.log(a);
+      },
+      get text() { return tmpText; },
+      stop(a) {
+        if (a)
+          console.log(a);
+        return result._icon;
+      },
+      clear() { return result._icon; },
+      start(text) {
+        result._icon.text = text;
+        return result._icon;
+      },
+      succeed(text) {
+        result._icon.text = text;
+        return result._icon;
+      },
+      fail(text) {
+        console.error(text);
+        return result._icon;
+      }
+    };
+
     return result._getResult(result);
   });
 };

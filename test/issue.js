@@ -175,8 +175,10 @@ describe('gogs issue reply', function() {
     const result = await run(`issue reply ${fullname} 1 -m "Some message"`);
 
     expect(result.err).to.equal(null);
-
-    expect(result.value).to.contain('Comment added to issue "#1"');
+    expect(result.logs).to.be.an('array').with.lengthOf(3);
+    expect(result.logs[0]).to.contain('Loading info for');
+    expect(result.logs[1]).to.contain('Creating new comment');
+    expect(result.logs[2]).to.contain('Comment added to issue');
   });
 });
 
