@@ -29,30 +29,35 @@ gogs config set token <INSERT_TOKEN>
 
 After this, you're good to go and can run any of the commands you'd like.
 
-The current capabilities include:
+## Commands
 
-- Adding and listing repositories
-- Adding, listing, reading and replying to issues
-- Finding user
-
-I plan to support all of the Gogs API through a sensible commandline, even administrative options
+Full command list:
 
 ```bash
-gogs <command>
-
-Commands:
-  gogs config <command>  Allow setting and getting Gogs CLI configuration
-                         options
-  gogs issue <command>   Perform operations with issues on Gogs
-  gogs repo <command>    Perform actions on and with repositories from Gogs
-  gogs user <command>    Perform actions with user in gogs
-  gogs util <command>    Utility command to improve the experience of the Gogs
-                         CLI
-
-Options:
-  --version  Show version number                                       [boolean]
-  --help     Show help                                                 [boolean]
+> # CLI utility commands
+> gogs config get <name>
+> gogs config set <name> <value>
+> gogs config describe <name>
+> gogs config util gen-completion
+>
+> # issue commands
+> # <repository> is in the format reewr/gogs-cli
+> gogs issue add <repository> [title]
+> gogs issue list [repository]|[username]|[organization]|<assigned>
+> gogs issue read <repository> <number>
+> gogs issue reply <repository> <issuenumber>
+>
+> # repository commands
+> gogs repo add <name>
+> gogs repo list [username_or_orgname]
+>
+> # User commands
+> gogs user find <username>
 ```
+
+A lot of the commands above have multiple uses, such as `issue list`, where it can be used to list issue from a single or multiple repositories
+
+I plan to eventually support all of the Gogs API through sensible command line actions, even administrative options.
 
 ## Getting autocompletion
 
