@@ -8,6 +8,13 @@ Minor version change (0.x.0) means a breaking change that may require you to do 
 
 Patch version changes (0.0.x) means a feature and/or bug fix.
 
+# 0.2.3
+
+**Date**: 09.02.2018<br>
+**Changes**:
+
+No features, just bug fixes. Fixes a crash that would occur if the CLI could not get in contact with Gogs. When not able to contact through the hostname, a more nicely formatted error is displayed instead.
+
 # 0.2.2
 
 **Date**: 09.02.2018<br>
