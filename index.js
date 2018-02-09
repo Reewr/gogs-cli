@@ -9,6 +9,7 @@ module.exports = async function(args) {
     .recommendCommands(true)
     .commandDir('commands')
     .demandCommand()
+    .wrap(Math.min(140, yargs.terminalWidth()))
     .help()
     .argv;
 
