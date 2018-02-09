@@ -61,13 +61,13 @@ The above will give you auto-completion on all commands that has completions as 
 
 ## Testing
 
-In order to test, you will need a local Gogs instance that the cli can contact and change. It primarily adds lots of repositories and issues.
+In order to test, you will need a local Gogs instance that the CLI can contact and change. It primarily adds lots of repositories and issues.
 
-When this is done, the following environment variables must be defined:
+**Note**: The local Gogs server should NOT be a production server and should only be one running for development. This is due to number of repositories and issues that are created. The best bet is to get one up and running using Docker.
 
 **GOGS_CLI_TEST_HOSTNAME**
 
-The hostname of the Gogs testing instance
+The hostname of the Gogs testing instance, including the port and protocol (example: "http://localhost:10080")
 
 **GOGS_CLI_TEST_USERNAME**
 
@@ -75,8 +75,8 @@ The user to perform tests with. This has to be an active user within the Gogs in
 
 **GOGS_CLI_TEST_TOKEN**
 
-The token to test with. This should be a token created by the user specified as "TEST_USERNAME".
+The token to test with. This should be a token created by the user specified as `GOGS_CLI_TEST_USERNAME`.
 
 **GOGS_CLI_TEST_ORGANIZATION**
 
-The organization to test with. This has to be an organization where "GOGS_CLI_TEST_USERNAME" is an owner so it can add repositories.
+The organization to test with. This has to be an organization where `GOGS_CLI_TEST_USERNAME` is an owner so it can add repositories.
