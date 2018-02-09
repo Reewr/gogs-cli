@@ -199,7 +199,7 @@ describe('gogs issue list', function() {
 
     expect(result.err).to.not.equal(null);
     expect(result.value).to.equal(null);
-    expect(result.err.message).to.equal('Not enough non-option arguments: got 0, need at least 1');
+    expect(result.err.message).to.contain('Expected username/repository');
   });
 
   it('throws on "issue list INVALIDREPOSITORYNAME"', async function() {

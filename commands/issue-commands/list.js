@@ -204,7 +204,7 @@ module.exports = {
       }).command('assigned', 'list assigned issues', {}, mkHandler(listAssigned));
   },
   handler: mkHandler(async function(argv) {
-    const [username, repository] = argv.repository.split('/');
+    const [username, repository] = (argv.repository || '').split('/');
 
     if (username && repository)
       return await listForRepository(argv, username, repository);
