@@ -14,7 +14,8 @@ gogs(process.argv.slice(2))
       ora().fail(err.message);
       process.exit(err.exitCode || 1);
     } else {
-      console.error(err);
+      ora().fail().clear();
+      console.error('An unknown error occurred: ', err);
       process.exit(1);
     }
   });
