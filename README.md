@@ -12,7 +12,13 @@ Then:
 npm install -g gogs-cli
 ```
 
-In your bashrc you can then add `~/.global_npm_packages/bin` to your PATH.
+In your .bashrc you can then add `~/.global_npm_packages/bin` to your PATH, by for instance adding the below:
+
+```bash
+if [ -d "$HOME/.global_npm_packages/bin" ]; then
+  export PATH:$PATH:$HOME/.global_npm_packages
+fi
+```
 
 The first commands you want to run is to set the configuration file. If you want to save the configuration file to somewhere else than `~/.config/gogs-cli/config.json`, please specify a path using the `GOGS_CLI_CONFIG_PATH` environment variable.
 
