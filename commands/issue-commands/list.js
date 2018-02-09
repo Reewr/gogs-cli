@@ -193,7 +193,7 @@ const listAssigned = async function(argv) {
 };
 
 module.exports = {
-  command: 'list [repository]|[username]|[organization_name]|<assigned>',
+  command: 'list [repository]|[username]|[organization]|<assigned>',
   desc   : 'List all issues for a specific repository, user or organization',
   builder: function(yargs) {
     return yargs
