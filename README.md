@@ -4,7 +4,7 @@ This command line interfaces tries to make it easier to work with Gogs outside o
 
 ## Getting started
 
-In order to get started, it is recommended to install this as global package so you can add `gogs` to your path in Bash. To do this, make sure that your `.npmrc` file has the `prefix` set to somewhere in your homefolder (such as `~/global_npm_packages`).
+In order to get started, it is recommended to install this as global package so you can add `gogs` to your path in Bash. To do this, make sure that your `.npmrc` file has the `prefix` set to somewhere in your home folder (such as `~/global_npm_packages`).
 
 Then:
 
