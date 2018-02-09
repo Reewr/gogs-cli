@@ -80,7 +80,3 @@ The token to test with. This should be a token created by the user specified as 
 **GOGS_CLI_TEST_ORGANIZATION**
 
 The organization to test with. This has to be an organization where "GOGS_CLI_TEST_USERNAME" is an owner so it can add repositories.
-
-**GOGS_CLI_TEST_PORT**
-
-If the Gogs instance does not run on normal ports for the HTTP/HTTPS hostname specified, you will need to specify that.
