@@ -28,6 +28,8 @@ Adds an indication of loading since some commands take quite some time. It also 
 
 `gogs issue read` now has a whole new format when outputting, the same goes for `gogs issue reply`, which follows the same formatting as read.
 
+In addition to this, there's a lot of structure changes in the project to allow for simpler development. However, these should be unseen by users.
+
 # 0.2.1
 
 **Date**: 31.01.2018<br>
