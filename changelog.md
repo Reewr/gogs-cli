@@ -10,9 +10,9 @@ Patch version changes (0.0.x) means a feature and/or bug fix.
 
 # 0.2.2
 
-**Date**: 02.02.2018<br>
-**Changes**:
+**Date**: 09.02.2018<br>
 **Fixes**: #3, #4, #5<br>
+**Changes**:
 
 Adds the option of listing all repositories for a specific user or organization. This can be done by specifying the optional name after `gogs repo list`, such as `gogs repo list reewr`.
 
