@@ -1,4 +1,4 @@
-#!/usr/bin/node
+#!/usr/bin/env node
 'use strict';
 const yargs = require('yargs');
 const ora   = require('ora');
