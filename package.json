@@ -1,6 +1,6 @@
 {
   "name": "gogs-cli",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Commandline interface for your Gogs needs",
   "main": "index.js",
   "scripts": {
