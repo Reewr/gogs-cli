@@ -8,6 +8,15 @@ Minor version change (0.x.0) means a breaking change that may require you to do 
 
 Patch version changes (0.0.x) means a feature and/or bug fix.
 
+# 0.3.0
+
+**Date**: 11.01.2020<br>
+**Changes**:
+
+Changes shebang from `/usr/bin/node` to `/usr/bin/env node` in order to support systems where node is not located within `/usr/bin` (see #8).
+
+This may be a possible breaking change depending on your setup. In most cases, it will work flawlessly. However, should you have a different node version within your path than that of `/usr/bin/node`, there may be issues.
+
 # 0.2.3
 
 **Date**: 09.02.2018<br>
